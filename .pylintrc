@@ -1,0 +1,7 @@
+[MASTER]
+
+# Python code to execute, usually for sys.path manipulation
+init-hook=
+    sys.path.append(os.getcwd());
+    from pylint_ignore import PylintIgnorePaths;
+    PylintIgnorePaths('silksnake/core/remote/proto')

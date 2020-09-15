@@ -1,0 +1,10 @@
+{
+    "seek_invalidTestSets": [
+        {"bucketName": "", "seekKey": "", "prefix": "", "key": "", "value": "", "ok": "false"}
+    ],
+    "seek_validTestSets": [
+        {"bucketName": "b", "seekKey": "000000000033a2db", "prefix": "", "key": "000000000033a2db05d7db38db2cecdc2a195159a02530b69b47d0ec970d5275352870769d94a618", "value": "c2c0c0", "ok": "true"},
+        {"bucketName": "h", "seekKey": "000000000033bca7", "prefix": "", "key": "000000000033bca76e", "value": "ac1d8dfdb2755c40a6a33c255d08044e909f0f5a2a10b5df6308ed04340b0ddd", "ok": "true"},
+        {"bucketName": "r", "seekKey": "000000000033a2db", "prefix": "", "key": "000000000033a2db05d7db38db2cecdc2a195159a02530b69b47d0ec970d5275352870769d94a618", "value": "c0", "ok": "true"}
+    ]
+}

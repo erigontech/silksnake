@@ -1,17 +1,17 @@
-"""This module patches pylint for issue #2686 [https://github.com/PyCQA/pylint/issues/2686]."""
 # -*- coding: utf-8 -*-
+"""This module patches pylint for issue #2686 [https://github.com/PyCQA/pylint/issues/2686]."""
 
 from pylint.utils import utils
 
 class PylintIgnorePaths:
-    """The PylintIgnorePaths class supports ignoring modules."""
+    """The PylintIgnorePaths class supports ignoring specified paths."""
     def __init__(self, *paths):
         self.paths = paths
         self.original_expand_modules = utils.expand_modules
         utils.expand_modules = self.patched_expand
 
     def patched_expand(self, *args, **kwargs):
-        """Overwrites module expansion to ignore"""
+        """Overwrites module expansion to ignore configured paths."""
         result, errors = self.original_expand_modules(*args, **kwargs)
 
         def keep_item(item):

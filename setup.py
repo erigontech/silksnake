@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Setup the project dependencies."""
 
 from setuptools import setup, find_packages
 
@@ -6,7 +7,7 @@ with open('README.md') as f:
     readme = f.read()
 
 with open('LICENSE') as f:
-    license = f.read()
+    license_text = f.read()
 
 setup(
     name='silksnake',
@@ -16,6 +17,6 @@ setup(
     author='canepat',
     author_email='tullio.canepa@gmail.com',
     url='https://github.com/torquem-ch/silksnake',
-    license=license,
+    license=license_text,
     packages=find_packages(exclude=('tests', 'docs'))
 )

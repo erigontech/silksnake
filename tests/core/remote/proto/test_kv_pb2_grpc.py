@@ -8,11 +8,10 @@ import grpc_testing
 from silksnake.core.remote.proto import kv_pb2
 from silksnake.core.remote.proto import kv_pb2_grpc
 
-class TestKVServicer(kv_pb2_grpc.KVServicer):
-    """The TestKVServicer class is a trivial KVServicer mock
+class KVServicerMock(kv_pb2_grpc.KVServicer):
+    """The KVServicerMock class is a trivial KVServicer mock
     """
     def __init__(self):
-        """Constructs the TestKVServicer instance."""
         self.key = ''
         self.value = ''
 
@@ -36,7 +35,7 @@ class TestCaseKVpb2(unittest.TestCase):
     """
     def setUp(self):
         """ Setup the test env. """
-        self.kv_servicer = TestKVServicer()
+        self.kv_servicer = KVServicerMock()
         desc2svc = {
             kv_pb2.DESCRIPTOR.services_by_name['KV']: self.kv_servicer
         }

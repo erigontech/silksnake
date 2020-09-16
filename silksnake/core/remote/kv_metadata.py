@@ -24,13 +24,3 @@ bucketDescriptors: [str] = {
     BLOCK_RECEIPTS_LABEL: BLOCK_RECEIPTS_NAME,
     TRANSACTION_LOOKUP_LABEL: TRANSACTION_LOOKUP_NAME
 }
-
-def encode_block_number(block_number: int) -> bytes:
-    """ Encode the given block number as 8-byte BigEndian.
-    """
-    return block_number.to_bytes(8, 'big')
-
-def decode_block_number(block_number_bytes: bytes) -> int:
-    """ Decode the given 8-byte BigEndian as block number.
-    """
-    return int.from_bytes(block_number_bytes, 'big')

@@ -3,6 +3,8 @@
 
 from silksnake.core.remote import kv_remote
 
+DEFAULT_TARGET = 'localhost:9090'
+
 def kv_seek(bucket, seek_key, target):
     """ Execute
         bucket - the bucket tag as string

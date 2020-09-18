@@ -6,7 +6,7 @@ from silksnake.core.remote import kv_remote
 DEFAULT_TARGET = 'localhost:9090'
 
 def kv_seek(bucket, seek_key, target):
-    """ Get the key plus value pair from bucket associated to specified seek_key on target.
+    """ Get the key-value pair for given seek_key from bucket of turbo-geth/silkworm running at target.
         bucket - the bucket tag as string
         seek_key - the seek key as bytes
         target - the server location as string <address>:<port>
@@ -19,12 +19,12 @@ def kv_seek(bucket, seek_key, target):
         remote_kv.close()
     return key, value
 
-def kv_seek_func(seek_func, target):
-    """ Execute the provided seek function on target.
+def kv_seek_func(func, target, *args):
+    """ Execute the provided seek function on the KV interface of turbo-geth/silkworm running at target.
     """
     remote_kv_client = kv_remote.new_remote_kv_client()
     remote_kv = remote_kv_client.with_target(target).open()
     try:
-        return seek_func(remote_kv.view())
+        return func(remote_kv.view(), *args)
     finally:
         remote_kv.close()

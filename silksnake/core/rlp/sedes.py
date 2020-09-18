@@ -21,8 +21,7 @@ class RlpSerializable(rlp.Serializable):
     def __str__(self):
         beautify = (lambda v: v.hex() if isinstance(v, bytes) else v)
         keyword_args = tuple("{}={!r}".format(k, beautify(v)) for k, v in self.as_dict().items())
-        return "({})".format(", ".join(keyword_args),
-        )
+        return "({})".format(", ".join(keyword_args))
 
 class BlockKey(RlpSerializable):
     """ RLP sedes for block keys as couple (number, hash).
@@ -79,14 +78,40 @@ transaction_list = rlp.sedes.CountableList(Transaction)
 uncle_list = rlp.sedes.CountableList(Uncle)
 block_body = rlp.sedes.List([transaction_list, uncle_list])
 
+CANONICAL_SUFFIX = b'\x6e'
+CANONICAL_SUFFIX_INT = int.from_bytes(CANONICAL_SUFFIX, 'big')
+
+DIFFICULTY_SUFFIX = b'\x74'
+DIFFICULTY_SUFFIX_INT = int.from_bytes(DIFFICULTY_SUFFIX, 'big')
+
 def encode_block_number(block_number: int) -> bytes:
     """ Encode the given block number as 8-byte BigEndian.
     """
     return uint8.serialize(block_number)
 
+def encode_canonical_block_number(block_number: int) -> bytes:
+    """ Encode the given block number as 8-byte BigEndian plus canonical suffix.
+    """
+    return uint8.serialize(block_number) + CANONICAL_SUFFIX
+
+def encode_block_key(block_number: int, block_hash: bytes) -> bytes:
+    """ Encode the given block number and hash as 40-byte block key.
+    """
+    return uint8.serialize(block_number) + hash32.serialize(block_hash)
+
+def encode_difficulty_block_key(block_key: bytes) -> bytes:
+    """ Encode the given block key plus difficulty suffix.
+    """
+    return block_key + DIFFICULTY_SUFFIX
+
 def decode_block_number(block_number_bytes: bytes) -> int:
     """ Decode the given 8-byte BigEndian as block number."""
     return uint8.deserialize(block_number_bytes)
+
+def decode_canonical_block_number(block_number_bytes: bytes) -> int:
+    """ Decode the given 9-byte BigEndian as block number plus canonical suffix."""
+    assert block_number_bytes[UINT8_SIZE] == CANONICAL_SUFFIX_INT, 'Invalid canonical block number suffix'
+    return uint8.deserialize(block_number_bytes[:UINT8_SIZE])
 
 def decode_block_hash(block_hash_bytes: bytes) -> bytes:
     """ Decode the given 32-byte as block hash."""
@@ -97,10 +122,19 @@ def decode_block_key(block_key_bytes: bytes) -> (int, str):
     # The block_key RLP format slightly uncommon requires splitting the input bytes in 2 chuncks.
     return BlockKey.deserialize([block_key_bytes[:UINT8_SIZE], block_key_bytes[UINT8_SIZE:]])
 
+def decode_difficulty_block_key(block_key_bytes: bytes) -> (int, str):
+    """ Decode the given bytes as block key plus difficulty suffix."""
+    assert block_key_bytes[UINT8_SIZE + HASH_SIZE] == DIFFICULTY_SUFFIX_INT, 'Invalid difficulty block key suffix'
+    return decode_block_key(block_key_bytes[:UINT8_SIZE + HASH_SIZE])
+
 def decode_block_header(block_header_bytes: bytes) -> BlockHeader:
-    """ Decode the given -byte as block header."""
+    """ Decode the given bytes as block header."""
     return rlp.decode(block_header_bytes, BlockHeader)
 
 def decode_block_body(block_body_bytes: bytes):
     """ Decode the given bytes as block body composed by: (transactions, uncles)."""
     return rlp.decode(block_body_bytes, block_body)
+
+def decode_block_total_difficulty(total_difficulty_bytes: bytes):
+    """ Decode the given bytes as block total difficulty."""
+    return rlp.decode(total_difficulty_bytes, rlp.sedes.big_endian_int)

@@ -7,12 +7,14 @@ ADDRESS_SIZE = 20
 HASH_SIZE = 32
 TRIE_ROOT_SIZE = 32
 UINT8_SIZE = 8
+UINT32_SIZE = 32
 UINT256_SIZE = 256
 
 address = rlp.sedes.Binary.fixed_length(ADDRESS_SIZE, allow_empty=True)
 hash32 = rlp.sedes.Binary.fixed_length(HASH_SIZE)
 trie_root = rlp.sedes.Binary.fixed_length(TRIE_ROOT_SIZE, allow_empty=True)
 uint8 = rlp.sedes.BigEndianInt(UINT8_SIZE)
+uint32 = rlp.sedes.BigEndianInt(UINT32_SIZE)
 uint256 = rlp.sedes.BigEndianInt(UINT256_SIZE)
 
 class RlpSerializable(rlp.Serializable):
@@ -22,6 +24,9 @@ class RlpSerializable(rlp.Serializable):
         beautify = (lambda v: v.hex() if isinstance(v, bytes) else v)
         keyword_args = tuple("{}={!r}".format(k, beautify(v)) for k, v in self.as_dict().items())
         return "({})".format(", ".join(keyword_args))
+
+    def __repr__(self):
+        return str(self)
 
 class BlockKey(RlpSerializable):
     """ RLP sedes for block keys as couple (number, hash).

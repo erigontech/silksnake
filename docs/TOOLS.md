@@ -7,7 +7,7 @@ The [tools](../tools) folder contains a set of simple command-line utilities for
 
 This is the lowest level command: a simple wrapper around gRPC KV seek message.
 
-```bash
+```shell-session
 $ ./tools/kv_seek.py -h
 usage: kv_seek.py [-h] [-t TARGET] bucket seek_key
 
@@ -32,7 +32,7 @@ Both key and value can be empty if no match is found.
 
 Let's see an example for bucket __Block Bodies__ (string label: _b_) and seek_key equal to block number __3384027__ (8-byte big-endian: _000000000033a2db_):
 
-```bash
+```shell-session
 $ ./tools/kv_seek.py b 000000000033a2db
 REQ bucket: b seek_key: 000000000033a2db
 RSP key: 000000000033a2db05d7db38db2cecdc2a195159a02530b69b47d0ec970d5275352870769d94a618 value: c2c0c0
@@ -40,26 +40,25 @@ RSP key: 000000000033a2db05d7db38db2cecdc2a195159a02530b69b47d0ec970d52753528707
 
 The command outputs the key corresponding to the concatenation of the block number (000000000033a2db) with the block hash (0x05d7db38db2cecdc2a195159a02530b69b47d0ec970d5275352870769d94a618). You can check by yourself [here](https://goerli.etherscan.io/block/3384027).
 
-BTW this is an empty block (sometimes happens), hence the apparently weird value _c2c0c0_ as block body.
+BTW this is an empty block (sometimes happens), hence the value _c2c0c0_ as block body (see [RLP](https://eth.wiki/fundamentals/rlp) for more info).
 
 ## __kv_seek_block_body__
 
-```bash
+```shell-session
 $ ./tools/kv_seek_block_body.py -h
 usage: kv_seek_block_body.py [-h] [-t TARGET] block_number
 
 The kv_seek_block_body command allows to query the turbo-geth/silkworm KV 'Block Bodies' bucket.
 
 positional arguments:
-  block_number          the block number as integer
+  block_number                  the block number as integer
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -t TARGET, --target TARGET
-                        the server location as string <address>:<port>
+  -h, --help                    show this help message and exit
+  -t TARGET, --target TARGET    the server location as string <address>:<port>
 ```
 
-```bash
+```shell-session
 $ ./tools/kv_seek_block_body.py 3384025
 REQ block_number: 3384025
 RSP block_hash: c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c transactions(1): [
@@ -70,22 +69,21 @@ Transaction(nonce=2406, gas_price=1000000, gas_limit=235255, to='12b731d23993eb9
 
 ## __kv_seek_block_header__
 
-```bash
+```shell-session
 $ ./tools/kv_seek_block_header.py -h
 usage: kv_seek_block_body.py [-h] [-t TARGET] block_number
 
 The kv_seek_block_header command allows to query the turbo-geth/silkworm KV 'Block Bodies' bucket.
 
 positional arguments:
-  block_number          the block number as integer
+  block_number                  the block number as integer
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -t TARGET, --target TARGET
-                        the server location as string <address>:<port>
+  -h, --help                    show this help message and exit
+  -t TARGET, --target TARGET    the server location as string <address>:<port>
 ```
 
-```bash
+```shell-session
 $ ./kv_seek_block_header.py 3384025
 CANONICAL HEADER
 REQ1 block_number: 3384025 (k1: 000000000033a2d96e)
@@ -98,4 +96,56 @@ RSP2 block_header: (parent_hash='8dd83d9290cdd6067f5181ae478ab09273787de93162776
 DIFFICULTY HEADER
 REQ3 block_number: 3384025 (k3: 000000000033a2d9c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c74)
 RSP3 block_total_difficulty: 4933005
+```
+
+## __kv_seek_block_number__
+
+```shell-session
+$ ./kv_seek_block_number.py -h
+usage: kv_seek_block_number.py [-h] [-t TARGET] block_hash
+
+The kv_seek_block_number command allows to query the turbo-geth/silkworm KV 'Header Numbers' bucket.
+
+positional arguments:
+  block_hash                    the block hash as string (w or w/o 0x prefix)
+
+optional arguments:
+  -h, --help                    show this help message and exit
+  -t TARGET, --target TARGET    the server location as string <address>:<port>
+```
+
+```shell-session
+tullio@precision-5520:~/workspace/silksnake/tools$ ./kv_seek_block_number.py e42335922909e0d371ca5e0aeb78afacfb9ff7e073304f7b9da88344dfb15550
+REQ block_hash: e42335922909e0d371ca5e0aeb78afacfb9ff7e073304f7b9da88344dfb15550
+RSP block_number: 3384020 (000000000033a2d4)
+```
+
+## __kv_seek_block_receipt__
+
+```shell-session
+$ ./kv_seek_block_receipt.py -h
+usage: kv_seek_block_receipt.py [-h] [-c COUNT] [-t TARGET] block_number
+
+The kv_seek_block_receipt command allows to query the turbo-geth/silkworm KV 'Receipts' bucket.
+
+positional arguments:
+  block_number                  the block number as integer
+
+optional arguments:
+  -h, --help                    show this help message and exit
+  -c COUNT, --count COUNT       the number of blocks to seek as integer
+  -t TARGET, --target TARGET    the server location as string <address>:<port>
+```
+
+```shell-session
+$ ./kv_seek_block_receipt.py 3384025
+CANONICAL HEADER
+REQ1 block_number: 3384025 (k1: 000000000033a2d96e)
+RSP1 block_hash: c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c 
+
+RECEIPT
+REQ2 block_number: 3384025 (k2: 000000000033a2d9c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c)
+RSP2 block_receipts(1): [
+receipt#0 (status=1, cumulative_gas_used=224534, logs=((address='12b731d23993eb97ba19e7c48ea6428edfd3e3e1', topics=(84296055546980476430285673802279178496784999664957386893553175854702533784871, 413076226928859296260450102926706283730929874486, 24070000, 20188000000000000000000), data='00000000000000000000000000000000000000000000000000000000000965360000000000000000000000000000000000000000000000000000000000096635c00fdd12a308538d70ee5ab0afef1e99d2281829f4063e767db281a28e601c92'),))
+]
 ```

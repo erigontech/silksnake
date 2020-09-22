@@ -16,6 +16,9 @@ jobs:
       - run:
           name: Run unit tests
           command: pytest tests
+      - run:
+          name: Run linter
+          command: pylint silksnake tests tools
 
 workflows:
   main:

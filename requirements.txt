@@ -1,5 +1,4 @@
-grpc
 grpcio
 grpcio_testing
 pytest
-pyrlp
+rlp

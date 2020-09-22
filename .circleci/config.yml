@@ -9,12 +9,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Upgrade pip
           command: pip install --upgrade pip
       - python/install-packages:
           pkg-manager: pip
       - run:
-          command: pytest --version
-          name: Test
+          name: Run unit tests
+          command: pytest tests
 
 workflows:
   main:

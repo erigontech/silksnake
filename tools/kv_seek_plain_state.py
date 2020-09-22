@@ -28,7 +28,11 @@ def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', tar
 
     print('REQ2 storage_location:', storage_location)
     key, value = kv_utils.kv_seek(kv_metadata.PLAIN_STATE_LABEL, storage_key, target)
-    assert key == storage_key, 'ERR storage key {} does not match!'.format(key.hex())
+    key_prefix_length = len(account_address_bytes) + len(incarnation_bytes)
+    key_prefix = key[:key_prefix_length]
+    assert key_prefix == storage_key[:key_prefix_length], 'ERR storage key prefix {} does not match!'.format(key_prefix.hex())
+    if key != storage_key:
+        print('WARN required location does NOT exist, value is from {} '.format(key[key_prefix_length:].hex()))
     print('RSP2 storage value:', value.hex())
 
 if __name__ == '__main__':

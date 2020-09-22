@@ -1,4 +1,5 @@
 grpcio
 grpcio_testing
+pylint
 pytest
 rlp

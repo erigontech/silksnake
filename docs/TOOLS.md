@@ -149,3 +149,41 @@ RSP2 block_receipts(1): [
 receipt#0 (status=1, cumulative_gas_used=224534, logs=((address='12b731d23993eb97ba19e7c48ea6428edfd3e3e1', topics=(84296055546980476430285673802279178496784999664957386893553175854702533784871, 413076226928859296260450102926706283730929874486, 24070000, 20188000000000000000000), data='00000000000000000000000000000000000000000000000000000000000965360000000000000000000000000000000000000000000000000000000000096635c00fdd12a308538d70ee5ab0afef1e99d2281829f4063e767db281a28e601c92'),))
 ]
 ```
+
+## __kv_seek_plain_state__
+
+```shell-session
+$ ./kv_seek_plain_state.py -h
+usage: kv_seek_plain_state.py [-h] [-l LOCATION] [-t TARGET] account_address
+
+The kv_seek_plain_state command allows to query the turbo-geth/silkworm KV 'Plain State' bucket.
+
+positional arguments:
+  account_address                     the account address as hex string (w or w/o 0x prefix)
+
+optional arguments:
+  -h, --help                          show this help message and exit
+  -l LOCATION, --location LOCATION    the storage location as hex string (w or w/o 0x prefix)
+  -t TARGET, --target TARGET          the server location as string <address>:<port>
+```
+
+```shell-session
+$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x02
+REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
+RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
+REQ2 storage_location: 0x02
+RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
+
+$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x2
+REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
+RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
+REQ2 storage_location: 0x2
+RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
+
+$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 2
+REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
+RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
+REQ2 storage_location: 2
+RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
+
+```

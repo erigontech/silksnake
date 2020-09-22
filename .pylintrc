@@ -6,6 +6,7 @@ init-hook=
     from pylint_ignore import PylintIgnorePaths;
     PylintIgnorePaths('silksnake/core/remote/proto')
 
+
 [MESSAGES CONTROL]
 
 # Disable the message, report, category or checker with the given id(s). You
@@ -13,6 +14,13 @@ init-hook=
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
 disable=too-many-ancestors,duplicate-code
+
+
+[DESIGN]
+
+# Maximum number of arguments for function / method
+max-args=12
+
 
 [FORMAT]
 

@@ -6,10 +6,10 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.core.remote import kv_metadata
-from silksnake.core.remote import kv_utils
-from silksnake.core.remote.kv_utils import DEFAULT_TARGET
-from silksnake.core.storage import account
+from silksnake.remote import kv_metadata
+from silksnake.remote import kv_utils
+from silksnake.remote.kv_utils import DEFAULT_TARGET
+from silksnake.core import account
 
 def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', target: str = DEFAULT_TARGET):
     """ Search for the provided account address in KV 'Plain State' bucket of turbo-geth/silkworm running at target.

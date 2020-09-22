@@ -3,8 +3,8 @@
 
 import grpc
 
-from silksnake.core.remote import kv_lmdb
-from silksnake.core.remote.proto import kv_pb2, kv_pb2_grpc
+from silksnake.remote import kv_lmdb
+from silksnake.remote.proto import kv_pb2, kv_pb2_grpc
 
 def new_remote_kv_client():
     """ Create a new remote KV client.

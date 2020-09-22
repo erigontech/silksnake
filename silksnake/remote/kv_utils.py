@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The kv_utils module contains utilities for accessing the turbo-geth/silkworm KV gRPC."""
 
-from silksnake.core.remote import kv_remote
+from silksnake.remote import kv_remote
 
 DEFAULT_TARGET = 'localhost:9090'
 

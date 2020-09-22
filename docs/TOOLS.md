@@ -84,7 +84,7 @@ optional arguments:
 ```
 
 ```shell-session
-$ ./kv_seek_block_header.py 3384025
+$ ./tools/kv_seek_block_header.py 3384025
 CANONICAL HEADER
 REQ1 block_number: 3384025 (k1: 000000000033a2d96e)
 RSP1 block_hash: c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c 
@@ -101,7 +101,7 @@ RSP3 block_total_difficulty: 4933005
 ## __kv_seek_block_number__
 
 ```shell-session
-$ ./kv_seek_block_number.py -h
+$ ./tools/kv_seek_block_number.py -h
 usage: kv_seek_block_number.py [-h] [-t TARGET] block_hash
 
 The kv_seek_block_number command allows to query the turbo-geth/silkworm KV 'Header Numbers' bucket.
@@ -115,7 +115,7 @@ optional arguments:
 ```
 
 ```shell-session
-tullio@precision-5520:~/workspace/silksnake/tools$ ./kv_seek_block_number.py e42335922909e0d371ca5e0aeb78afacfb9ff7e073304f7b9da88344dfb15550
+$ ./tools/kv_seek_block_number.py e42335922909e0d371ca5e0aeb78afacfb9ff7e073304f7b9da88344dfb15550
 REQ block_hash: e42335922909e0d371ca5e0aeb78afacfb9ff7e073304f7b9da88344dfb15550
 RSP block_number: 3384020 (000000000033a2d4)
 ```
@@ -123,7 +123,7 @@ RSP block_number: 3384020 (000000000033a2d4)
 ## __kv_seek_block_receipt__
 
 ```shell-session
-$ ./kv_seek_block_receipt.py -h
+$ ./tools/kv_seek_block_receipt.py -h
 usage: kv_seek_block_receipt.py [-h] [-c COUNT] [-t TARGET] block_number
 
 The kv_seek_block_receipt command allows to query the turbo-geth/silkworm KV 'Receipts' bucket.
@@ -138,7 +138,7 @@ optional arguments:
 ```
 
 ```shell-session
-$ ./kv_seek_block_receipt.py 3384025
+$ ./tools/kv_seek_block_receipt.py 3384025
 CANONICAL HEADER
 REQ1 block_number: 3384025 (k1: 000000000033a2d96e)
 RSP1 block_hash: c8caaa2831cc2e9b7710af3455e4d5a121ee7ba2d1d4293b69b4e8aeaed7309c 
@@ -153,7 +153,7 @@ receipt#0 (status=1, cumulative_gas_used=224534, logs=((address='12b731d23993eb9
 ## __kv_seek_plain_state__
 
 ```shell-session
-$ ./kv_seek_plain_state.py -h
+$ ./tools/kv_seek_plain_state.py -h
 usage: kv_seek_plain_state.py [-h] [-l LOCATION] [-t TARGET] account_address
 
 The kv_seek_plain_state command allows to query the turbo-geth/silkworm KV 'Plain State' bucket.
@@ -168,19 +168,19 @@ optional arguments:
 ```
 
 ```shell-session
-$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x02
+$ ./tools/kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x02
 REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
 RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
 REQ2 storage_location: 0x02
 RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
 
-$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x2
+$ ./tools/kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 0x2
 REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
 RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
 REQ2 storage_location: 0x2
 RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
 
-$ ./kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 2
+$ ./tools/kv_seek_plain_state.py 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6 -l 2
 REQ1 account_address: 256b4f8185caa65ea98764e8ea2fd9cd4a5993e6
 RSP1 account: (nonce=1, balance=0, incarnation=1, storage_root='', code_hash='10b37de11f39e0a372615c70e1d4d7c613937e8f61823d59be9bea62112e175c')
 REQ2 storage_location: 2

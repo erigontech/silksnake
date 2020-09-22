@@ -6,10 +6,10 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.core.rlp import sedes
-from silksnake.core.remote import kv_metadata
-from silksnake.core.remote import kv_utils
-from silksnake.core.remote.kv_utils import DEFAULT_TARGET
+from silksnake.rlp import sedes
+from silksnake.remote import kv_metadata
+from silksnake.remote import kv_utils
+from silksnake.remote.kv_utils import DEFAULT_TARGET
 
 def kv_seek_block_body(block_height: int, count: int = 1, target: str = DEFAULT_TARGET):
     """ Search for the provided block range in KV 'Block Bodies' bucket of turbo-geth/silkworm running at target.

@@ -5,59 +5,56 @@
 <br>
 
 # silksnake
-Python library to access turbo-geth/silkworm data remotely
+__silksnake__ is a Python library to access turbo-geth/silkworm data remotely
 
 ## Platform Requirements
 
 ### Python Interpreter
-Install __Python 3.x__ from [Python Downloads](https://www.python.org/downloads/)
+Install __Python 3.x__ from [Python Downloads](https://www.python.org/downloads/) and check the installation using
+
+```shell-session
+$ python --version
+Python 3.6.9
+```
 
 ### Python Package Installer (pip)
 After Python installation, it is recommended [Upgrading pip](https://pip.pypa.io/en/stable/installing/#upgrading-pip)
 
+
 ## Setup
+
+Please perform the following commands from silksnake root folder.
 
 ### Dependencies
 Install dependencies using
 
-```bash
-python3 -m pip install -r requirements.txt
+```shell-session
+$ pip install -r requirements.txt
 ```
 
 or
 
-```bash
-python3 setup.py
+```shell-session
+$ python setup.py
 ```
-
-
-### Binding Generation
-Run binding generation for turbo-geth/silkworm gRPC interface using
-
-```bash
-python3 -m grpc_tools.protoc --proto_path=. --python_out=. --grpc_python_out=. silksnake/core/remote/proto/kv.proto
-```
-
 
 ### Test
 Run unit tests using
   
-```bash
-python3 -m unittest discover -v -s tests
+```shell-session
+$ pytest tests
 ```
-
 
 ### Linter
 Run [pylint](https://www.pylint.org/) using
 
-```bash
-python3 -m pylint silksnake tests
+```shell-session
+$ pylint silksnake tests tools
 ```
 
+### Binding Generation (not required)
+Run binding generation for turbo-geth/silkworm KV gRPC interface using
 
-### CI simulation
-Run CI simulation using
-
-```bash
-python3 ci.py
+```shell-session
+$ python -m grpc_tools.protoc --proto_path=. --python_out=. --grpc_python_out=. silksnake/remote/proto/kv.proto
 ```

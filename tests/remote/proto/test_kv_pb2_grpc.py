@@ -5,8 +5,8 @@ import unittest
 import grpc
 import grpc_testing
 
-from silksnake.core.remote.proto import kv_pb2
-from silksnake.core.remote.proto import kv_pb2_grpc
+from silksnake.remote.proto import kv_pb2
+from silksnake.remote.proto import kv_pb2_grpc
 
 class KVServicerMock(kv_pb2_grpc.KVServicer):
     """The KVServicerMock class is a trivial KVServicer mock

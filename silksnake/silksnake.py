@@ -7,7 +7,7 @@ __version__ = "0.0.1"
 import argparse
 import logging
 
-from .core.remote.kv_remote import RemoteClient # pylint: disable=unused-import
+from .remote.kv_remote import RemoteClient # pylint: disable=unused-import
 
 # Processing command line arguments
 parser = argparse.ArgumentParser()

@@ -6,7 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.core.remote import kv_utils
+from silksnake.remote import kv_utils
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('bucket', help='the bucket tag as string')

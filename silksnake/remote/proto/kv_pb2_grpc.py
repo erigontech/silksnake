@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from silksnake.core.remote.proto import kv_pb2 as silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2
+from silksnake.remote.proto import kv_pb2 as silksnake_dot_remote_dot_proto_dot_kv__pb2
 
 
 class KVStub(object):
@@ -17,8 +17,8 @@ class KVStub(object):
         """
         self.Seek = channel.stream_stream(
                 '/remote.KV/Seek',
-                request_serializer=silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.SerializeToString,
-                response_deserializer=silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.Pair.FromString,
+                request_serializer=silksnake_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.SerializeToString,
+                response_deserializer=silksnake_dot_remote_dot_proto_dot_kv__pb2.Pair.FromString,
                 )
 
 
@@ -41,8 +41,8 @@ def add_KVServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Seek': grpc.stream_stream_rpc_method_handler(
                     servicer.Seek,
-                    request_deserializer=silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.FromString,
-                    response_serializer=silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.Pair.SerializeToString,
+                    request_deserializer=silksnake_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.FromString,
+                    response_serializer=silksnake_dot_remote_dot_proto_dot_kv__pb2.Pair.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -67,7 +67,7 @@ class KV(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.stream_stream(request_iterator, target, '/remote.KV/Seek',
-            silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.SerializeToString,
-            silksnake_dot_core_dot_remote_dot_proto_dot_kv__pb2.Pair.FromString,
+            silksnake_dot_remote_dot_proto_dot_kv__pb2.SeekRequest.SerializeToString,
+            silksnake_dot_remote_dot_proto_dot_kv__pb2.Pair.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

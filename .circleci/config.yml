@@ -8,6 +8,8 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      - run:
+          command: pip install --upgrade pip
       - python/install-packages:
           pkg-manager: pip
       - run:

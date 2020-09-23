@@ -19,7 +19,23 @@ def kv_seek(bucket, seek_key, target):
         remote_kv.close()
     return key, value
 
-def kv_seek_func(func, target, *args):
+def kv_walk(target, bucket, prefix, walker):
+    """ Walk through the cursor streaming the KV interface of turbo-geth/silkworm running at target.
+    """
+    remote_kv_client = kv_remote.new_remote_kv_client()
+    remote_kv = remote_kv_client.with_target(target).open()
+    try:
+        cursor = remote_kv.view().cursor(bucket).with_prefix(prefix).enable_streaming(True)
+        for pair in cursor.next():
+            if pair.key == b'':
+                break
+            stop = walker(pair.key, pair.value)
+            if stop:
+                break
+    finally:
+        remote_kv.close()
+
+def kv_func(target, func, *args):
     """ Execute the provided seek function on the KV interface of turbo-geth/silkworm running at target.
     """
     remote_kv_client = kv_remote.new_remote_kv_client()

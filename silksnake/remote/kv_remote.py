@@ -77,10 +77,17 @@ class RemoteCursor:
         self.remote_kv_store = remote_kv_store
         self.bucket_name = bucket_name
         self.prefix = b''
+        self.streaming = False
 
     def with_prefix(self, prefix):
         """ Configure the cursor with the specified prefix."""
         self.prefix = prefix
+        return self
+
+    def enable_streaming(self, streaming):
+        """ Configure the cursor with the specified streaming flag."""
+        self.streaming = streaming
+        return self
 
     def seek(self, key):
         """ Seek the value in the bucket associated to the specified key."""
@@ -98,3 +105,10 @@ class RemoteCursor:
         else:
             value = None
         return value
+
+    def next(self):
+        """ Get key-value streaming iterator for the bucket bound to prefix."""
+        request = kv_pb2.SeekRequest(bucketName=self.bucket_name, seekKey=self.prefix, prefix=self.prefix, startSreaming=self.streaming)
+        request_iterator = iter([request])
+        response_iterator = self.remote_kv_store.kv_stub.Seek(request_iterator)
+        return response_iterator

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-
 """The unit tests for turbo-geth/silkworm KV gRPC client."""
+
 from typing import Iterator
-import unittest
 
 import grpc
 import grpc_testing
+import pytest
 
 from silksnake.remote.proto import kv_pb2
 from silksnake.remote.proto import kv_pb2_grpc
+
+# pylint: disable=attribute-defined-outside-init
 
 class KVServicerMock(kv_pb2_grpc.KVServicer):
     """The KVServicerMock class is a trivial KVServicer mock
@@ -33,10 +35,11 @@ class KVServicerMock(kv_pb2_grpc.KVServicer):
         assert request.prefix is not None, 'prefix is None'
         return iter([kv_pb2.Pair(key=self.key, value=self.value)])
 
-class TestCaseKVpb2(unittest.TestCase):
-    """The TestCaseKVpb2 class is the unit test case for KV gRPC interface.
+class TestKVpb2:
+    """ Unit test case for KV gRPC interface.
     """
-    def setUp(self):
+    @pytest.fixture(autouse=True)
+    def setup(self):
         """ Setup the test env. """
         self.kv_servicer = KVServicerMock()
         desc2svc = {
@@ -66,9 +69,6 @@ class TestCaseKVpb2(unittest.TestCase):
         response = seek_method.take_response()
         _, code, _ = seek_method.termination()
 
-        self.assertEqual(code, grpc.StatusCode.OK)
-        self.assertEqual(response.key, seek_key)
-        self.assertEqual(response.value, expected_value)
-
-if __name__ == '__main__':
-    unittest.main()
+        assert code == grpc.StatusCode.OK
+        assert response.key == seek_key
+        assert response.value == expected_value

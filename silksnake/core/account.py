@@ -23,6 +23,9 @@ class Account:
 
         def read_next(pos: int, length: int) -> (int, bytes):
             value_bytes = account_bytes[pos + 1 : pos + length + 1]
+            value_length = len(value_bytes)
+            if value_length != length:
+                raise ValueError('expected length ' + str(length) + ', actual ' + str(value_length))
             return pos + length + 1, value_bytes
 
         fieldset = AccountFieldSet(account_bytes[0])
@@ -53,9 +56,9 @@ class Account:
             pos, code_hash_bytes = read_next(pos, account_bytes[pos])
             code_hash = code_hash_bytes.hex()
 
-        return Account(nonce, balance, incarnation, code_hash, storage_root)
+        return Account(nonce, balance, incarnation, storage_root, code_hash)
 
-    def __init__(self, nonce: int, balance: int, incarnation: int, code_hash: str, storage_root: str):
+    def __init__(self, nonce: int, balance: int, incarnation: int, storage_root: str, code_hash: str):
         self.nonce = nonce
         self.balance = balance
         self.incarnation = incarnation

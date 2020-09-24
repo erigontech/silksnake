@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 """The storage encoding/decoding for accounts."""
 
+import enum
+
+class AccountFieldSet(enum.IntFlag):
+    """ This class represents the account fields.
+    """
+    NONCE = 1
+    BALANCE = 2
+    INCARNATION = 4
+    CODE_HASH = 8
+    STORAGE_ROOT = 16
+
 class Account:
     """ This class represents the blockchain account.
     """
-    NONCE_FIELD_MASK = 1
-    BALANCE_FIELD_MASK = 2
-    INCARNATION_FIELD_MASK = 4
-    CODE_HASH_FIELD_MASK = 8
-    STORAGE_ROOT_FIELD_MASK = 16
-
     @classmethod
     def from_bytes(cls, account_bytes: bytes):
         """ Create an account from serialized account_bytes."""
@@ -20,37 +25,37 @@ class Account:
             value_bytes = account_bytes[pos + 1 : pos + length + 1]
             return pos + length + 1, value_bytes
 
-        fieldset = account_bytes[0]
+        fieldset = AccountFieldSet(account_bytes[0])
         pos = 1
 
         nonce = 0
-        if fieldset & cls.NONCE_FIELD_MASK:
+        if fieldset & AccountFieldSet.NONCE:
             pos, nonce_bytes = read_next(pos, account_bytes[pos])
             nonce = int.from_bytes(nonce_bytes, 'big')
 
         balance = 0
-        if fieldset & cls.BALANCE_FIELD_MASK:
+        if fieldset & AccountFieldSet.BALANCE:
             pos, balance_bytes = read_next(pos, account_bytes[pos])
             balance = int.from_bytes(balance_bytes, 'big')
 
         incarnation = 0
-        if fieldset & cls.INCARNATION_FIELD_MASK:
+        if fieldset & AccountFieldSet.INCARNATION:
             pos, incarnation_bytes = read_next(pos, account_bytes[pos])
             incarnation = int.from_bytes(incarnation_bytes, 'big')
 
         storage_root = ''
-        if fieldset & cls.STORAGE_ROOT_FIELD_MASK:
+        if fieldset & AccountFieldSet.STORAGE_ROOT:
             pos, storage_root_bytes = read_next(pos, account_bytes[pos])
             storage_root = storage_root_bytes.hex()
 
         code_hash = ''
-        if fieldset & cls.CODE_HASH_FIELD_MASK:
+        if fieldset & AccountFieldSet.CODE_HASH:
             pos, code_hash_bytes = read_next(pos, account_bytes[pos])
             code_hash = code_hash_bytes.hex()
 
         return Account(nonce, balance, incarnation, code_hash, storage_root)
 
-    def __init__(self, nonce, balance, incarnation, code_hash, storage_root):
+    def __init__(self, nonce: int, balance: int, incarnation: int, code_hash: str, storage_root: str):
         self.nonce = nonce
         self.balance = balance
         self.incarnation = incarnation

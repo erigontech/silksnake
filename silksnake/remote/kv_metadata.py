@@ -17,7 +17,7 @@ BLOCK_RECEIPTS_NAME: str = 'Receipts'
 PLAIN_STATE_NAME: str = 'Plain State'
 TRANSACTION_LOOKUP_NAME: str = 'Transaction Index'
 
-bucketLabels = [
+bucketLabels: [str] = [
     BLOCK_BODIES_LABEL,
     BLOCK_HEADERS_LABEL,
     BLOCK_HEADER_NUMBERS_LABEL,

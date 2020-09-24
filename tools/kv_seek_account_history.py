@@ -16,7 +16,7 @@ def kv_seek_account_history(account_address: str, block_number: str, target: str
     """
     account_history_key = kv_metadata.encode_account_history_key(account_address, int(block_number))
 
-    print('REQ account_address:', account_address, '(' + str(account_history_key.hex()) + ')')
+    print('REQ account_address:', account_address, '(key: ' + str(account_history_key.hex()) + ')')
 
     print('RSP history: [')
     walker = lambda key, value: print('key:', key.hex(), 'value:', value.hex())

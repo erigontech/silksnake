@@ -17,7 +17,7 @@ def kv_seek_block_body(block_height: int, count: int = 1, target: str = DEFAULT_
     for index, block_number in enumerate(range(block_height, block_height + count)):
         encoded_block_number = sedes.encode_block_number(block_number)
 
-        print('REQ block_number:', block_number)
+        print('REQ block_number:', block_number, '(key: ' + str(encoded_block_number.hex()) + ')')
 
         key, value = kv_utils.kv_seek(kv_metadata.BLOCK_BODIES_LABEL, encoded_block_number, target)
 

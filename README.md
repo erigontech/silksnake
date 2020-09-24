@@ -10,7 +10,7 @@ __silksnake__ is a Python library to access turbo-geth/silkworm data remotely
 ## Platform Requirements
 
 ### Python Interpreter
-Install __Python 3.x__ from [Python Downloads](https://www.python.org/downloads/) and check the installation using
+Install __Python 3.x__ from [here](https://www.python.org/downloads/) and check the installation using
 
 ```shell-session
 $ python --version

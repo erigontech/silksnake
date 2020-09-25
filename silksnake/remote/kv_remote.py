@@ -86,11 +86,20 @@ class RemoteKV:
         """ Close the remove KV."""
         self.channel.close()
 
+class SecurityOptions:
+    """ This class represents the channel security options.
+    """
+    def __init__(self, server_cert: str = None, client_cert: str = None, client_key: str = None):
+        self.server_cert = server_cert
+        self.client_cert = client_cert
+        self.client_key = client_key
+
 class RemoteClient:
     """ This class represents the remote KV client.
     """
-    def __init__(self):
-        self.target = DEFAULT_TARGET
+    def __init__(self, target: str = DEFAULT_TARGET, options: SecurityOptions = SecurityOptions()):
+        self.target = target
+        self.options = options
 
     def with_target(self, target: str):
         """ Configure the client to use the specified server (address:port) end point.
@@ -101,6 +110,24 @@ class RemoteClient:
     def open(self) -> RemoteKV:
         """ Open a new remote KV store instance.
         """
-        channel = grpc.insecure_channel(self.target)
+        if self.options.server_cert:
+            cert_chain = None
+            private_key = None
+            if self.options.client_cert:
+                cert_chain = _load(self.options.client_cert)
+                private_key = _load(self.options.client_key)
+
+            root_cert = _load(self.options.server_cert)
+            credentials = grpc.ssl_channel_credentials(root_cert, private_key, cert_chain)
+            channel = grpc.secure_channel(self.target, credentials)
+        else:
+            channel = grpc.insecure_channel(self.target)
+
         kv_stub = kv_pb2_grpc.KVStub(channel)
         return RemoteKV(channel, kv_stub)
+
+def _load(path):
+    """ Load binary file from specified path."""
+    with open(path, 'rb') as file:
+        data = file.read()
+    return data

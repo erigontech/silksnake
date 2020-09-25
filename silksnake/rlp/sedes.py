@@ -3,12 +3,7 @@
 
 import rlp
 
-ADDRESS_SIZE = 20
-HASH_SIZE = 32
-TRIE_ROOT_SIZE = 32
-UINT8_SIZE = 8
-UINT32_SIZE = 32
-UINT256_SIZE = 256
+from silksnake.core.constants import ADDRESS_SIZE, HASH_SIZE, TRIE_ROOT_SIZE, UINT8_SIZE, UINT32_SIZE, UINT256_SIZE
 
 address = rlp.sedes.Binary.fixed_length(ADDRESS_SIZE, allow_empty=True)
 hash32 = rlp.sedes.Binary.fixed_length(HASH_SIZE)

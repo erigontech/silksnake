@@ -9,7 +9,7 @@ import context # pylint: disable=unused-import
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_metadata import INVALID_BLOCK_NUMBER
-from silksnake.remote.kv_utils import DEFAULT_TARGET
+from silksnake.remote.kv_remote import DEFAULT_TARGET
 
 def kv_seek_account_history(account_address: str, block_number: str, target: str = DEFAULT_TARGET):
     """ Search for the provided account address in KV 'History of Accounts' bucket of turbo-geth/silkworm.

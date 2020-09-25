@@ -11,7 +11,7 @@ from silksnake.rlp import sedes
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
-from silksnake.remote.kv_utils import DEFAULT_TARGET
+from silksnake.remote.kv_remote import DEFAULT_TARGET
 
 def kv_seek_block_receipt(kv_view: kv_remote.RemoteView, block_height: int, count: int = 1):
     """ Search for the provided block range in KV 'Receipts' bucket of turbo-geth/silkworm running at target.

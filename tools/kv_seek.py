@@ -7,11 +7,12 @@ import argparse
 import context # pylint: disable=unused-import
 
 from silksnake.remote import kv_utils
+from silksnake.remote.kv_remote import DEFAULT_TARGET
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('bucket', help='the bucket tag as string')
 parser.add_argument('seek_key', help='the seek key as hex string without leading 0x')
-parser.add_argument('-t', '--target', default='localhost:9090', help='the server location as string <address>:<port>')
+parser.add_argument('-t', '--target', default=DEFAULT_TARGET, help='the server location as string <address>:<port>')
 args = parser.parse_args()
 
 print('REQ bucket:', args.bucket, 'seek_key:', args.seek_key)

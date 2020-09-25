@@ -7,13 +7,16 @@ import grpc
 
 from silksnake.remote.proto import kv_pb2, kv_pb2_grpc
 
+DEFAULT_TARGET: str = 'localhost:9090'
+DEFAULT_PREFIX: str = b''
+
 class RemoteCursor:
     """ This class represents a remote read-only cursor on the KV.
     """
     def __init__(self, kv_stub: kv_pb2_grpc.KVStub, bucket_name: str):
         self.kv_stub = kv_stub
         self.bucket_name = bucket_name
-        self.prefix = b''
+        self.prefix = DEFAULT_PREFIX
         self.streaming = False
 
     def with_prefix(self, prefix: bytes):
@@ -87,7 +90,7 @@ class RemoteClient:
     """ This class represents the remote KV client.
     """
     def __init__(self):
-        self.target = 'localhost:9090'
+        self.target = DEFAULT_TARGET
 
     def with_target(self, target: str):
         """ Configure the client to use the specified server (address:port) end point.

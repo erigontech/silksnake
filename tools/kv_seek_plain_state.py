@@ -8,7 +8,7 @@ import context # pylint: disable=unused-import
 
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
-from silksnake.remote.kv_utils import DEFAULT_TARGET
+from silksnake.remote.kv_remote import DEFAULT_TARGET
 from silksnake.core import account
 
 def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', target: str = DEFAULT_TARGET):

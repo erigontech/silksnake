@@ -5,8 +5,6 @@ from typing import Any, Callable
 
 from silksnake.remote import kv_remote
 
-DEFAULT_TARGET = 'localhost:9090'
-
 def kv_seek(bucket: str, seek_key: bytes, target: str) -> (bytes, bytes):
     """ Get the key-value pair for given seek_key from bucket of turbo-geth/silkworm running at target.
         bucket - the bucket tag as string

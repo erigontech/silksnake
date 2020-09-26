@@ -33,7 +33,7 @@ def kv_seek_block_header(kv_view: kv_remote.RemoteView, block_height: int, count
         print('RSP2 block_header:', block_header, '\n')
 
         encoded_difficulty_block_key = sedes.encode_difficulty_block_key(encoded_block_key)
-        print('DIFFICULTY HEADER\nREQ3 block_number:', block_number, '(key: ' + str(encoded_difficulty_block_key.hex()) + ')')
+        print('TOTAL DIFFICULTY HEADER\nREQ3 block_number:', block_number, '(key: ' + str(encoded_difficulty_block_key.hex()) + ')')
         key, value = kv_view.get(kv_metadata.BLOCK_HEADERS_LABEL, encoded_difficulty_block_key)
         decoded_block_number, decoded_block_hash = sedes.decode_difficulty_block_key(key)
         block_total_difficulty = sedes.decode_block_total_difficulty(value)

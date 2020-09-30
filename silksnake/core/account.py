@@ -16,7 +16,7 @@ class Account:
     """ This class represents the blockchain account.
     """
     @classmethod
-    def from_bytes(cls, account_bytes: bytes):
+    def from_storage(cls, account_bytes: bytes):
         """ Create an account from serialized account_bytes."""
         if len(account_bytes) == 0:
             raise ValueError('zero length account_bytes')

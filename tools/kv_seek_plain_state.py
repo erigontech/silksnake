@@ -19,7 +19,7 @@ def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', tar
     print('REQ1 account_address:', account_address)
     key, value = kv_utils.kv_seek(kv_metadata.PLAIN_STATE_LABEL, account_address_bytes, target)
     assert key == account_address_bytes, 'ERR account address {} does not match!'.format(key.hex())
-    stored_account = account.Account.from_bytes(value)
+    stored_account = account.Account.from_storage(value)
     print('RSP1 account:', stored_account)
 
     incarnation_bytes = kv_metadata.encode_incarnation(stored_account.incarnation)

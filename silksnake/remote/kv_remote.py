@@ -5,7 +5,7 @@ from typing import Iterator, NamedTuple
 
 import grpc
 
-from silksnake.remote.proto import kv_pb2, kv_pb2_grpc
+from .proto import kv_pb2, kv_pb2_grpc
 
 DEFAULT_TARGET: str = 'localhost:9090'
 DEFAULT_PREFIX: str = b''

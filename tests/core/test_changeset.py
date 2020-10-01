@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The unit test for change-set type."""
+"""The unit test for changeset module."""
 
 import pytest
 

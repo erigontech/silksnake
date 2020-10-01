@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The unit test for storage encoding/decoding of accounts."""
+"""The unit test for account module."""
 
 import pytest
 

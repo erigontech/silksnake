@@ -243,18 +243,15 @@ key: fe09353b5740a2255ba62879512a94e8bf53f7f4000000000019d453 value: 00000000001
 $ ./tools/kv_seek_tx_senders.py -h
 usage: kv_seek_tx_senders.py [-h] [-c COUNT] [-t TARGET] block_number
 
-The kv_seek_tx_senders command allows to query the turbo-geth/silkworm KV
-'Receipts' bucket.
+The kv_seek_tx_senders command allows to query the turbo-geth/silkworm KV 'Receipts' bucket.
 
 positional arguments:
-  block_number          the block number as integer
+  block_number                         the block number as integer
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -c COUNT, --count COUNT
-                        the number of blocks to seek as integer
-  -t TARGET, --target TARGET
-                        the server location as string <address>:<port>
+  -h, --help                           show this help message and exit
+  -c COUNT, --count COUNT              the number of blocks to seek as integer
+  -t TARGET, --target TARGET           the server location as string <address>:<port>
 ```
 
 ```shell-session
@@ -270,4 +267,27 @@ address#0 0828d0386c1122e565f07dd28c7d1340ed5b3315
 address#1 28d0386c1122e565f07dd28c7d1340ed5b3315fa
 address#2 d0386c1122e565f07dd28c7d1340ed5b3315fab2
 ]
+```
+
+## __kv_seek_plain_contract_code__
+
+```shell-session
+$ ./tools/kv_seek_plain_contract_code.py -h
+usage: kv_seek_plain_contract_code.py [-h] [-i INCARNATION] [-t TARGET] account_address
+
+The kv_seek_plain_contract_code command allows to query the KV 'Plain Code Hash' table.
+
+positional arguments:
+  account_address                  the account address as hex string (w or w/o 0x prefix)
+
+optional arguments:
+  -h, --help                       show this help message and exit
+  -i INCARNATION, --incarnation    datatrasciatto.q the contract incarnation as positive integer
+  -t TARGET, --target TARGET       the server location as string <address>:<port>
+```
+
+```shell-session
+$ ./tools/kv_seek_plain_contract_code.py 33ee33fc3e1aacdb75a1ad362489ac54f02d6d63 -i 1
+REQ plain_code_key: 33ee33fc3e1aacdb75a1ad362489ac54f02d6d630000000000000001
+RSP code_hash value: ce2b005babb54061effd5aad8d527907d703ecbab5c17ddc78fbe6689661a54d
 ```

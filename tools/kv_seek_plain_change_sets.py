@@ -29,7 +29,7 @@ def kv_seek_plain_change_sets(kv_view: kv_remote.RemoteView, block_height: int, 
         print('STORAGE CHANGES\nREQ2 block_number:', block_number, '(key: ' + str(change_set_key.hex()) + ')')
         key, value = kv_view.get(kv_metadata.PLAIN_STORAGE_CHANGE_SET_LABEL, change_set_key)
         storage_changeset = changeset.PlainStorageChangeSet(value)
-        print('RSP2 key:', key.hex(), storage_changeset, '[]:')
+        print('RSP2 key:', key.hex(), storage_changeset, '[')
         for i, (address, incarnation, change_set) in enumerate(storage_changeset):
             print('storage_change#' + str(i), 'address:', address, 'incarnation:', incarnation, change_set)
         print(']\n')

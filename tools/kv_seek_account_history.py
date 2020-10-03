@@ -18,14 +18,14 @@ def kv_seek_account_history(account_address: str, block_number: int, target: str
 
     print('REQ1 account_address:', account_address, '(key: ' + str(account_history_key.hex()) + ')')
 
-    print('RSP1 history: [')
+    print('RSP1 account history: [')
     walker = lambda key, value: print('key:', key.hex(), 'value:', value.hex())
     kv_utils.kv_walk(target, kv_metadata.ACCOUNTS_HISTORY_LABEL, account_history_key, walker)
     print(']')
 
     print('REQ2 account_address:', account_address, '(key: ' + str(account_history_key.hex()) + ')')
 
-    print('RSP2 history: [')
+    print('RSP2 storage history: [')
     walker = lambda key, value: print('key:', key.hex(), 'value:', value.hex())
     kv_utils.kv_walk(target, kv_metadata.STORAGE_HISTORY_LABEL, account_history_key, walker)
     print(']')

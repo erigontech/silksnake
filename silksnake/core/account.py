@@ -3,9 +3,12 @@
 
 import enum
 
+from .constants import HASH_SIZE
+
 class AccountFieldSet(enum.IntFlag):
     """ This class represents the account fields.
     """
+    NONE = 0
     NONCE = 1
     BALANCE = 2
     INCARNATION = 4
@@ -64,6 +67,49 @@ class Account:
         self.incarnation = incarnation
         self.storage_root = storage_root
         self.code_hash = code_hash
+
+    def encode_to_storage(self, account_bytes: bytes) -> None:
+        """ encode_to_storage """
+        if len(account_bytes) == 0:
+            raise ValueError('zero length account_bytes')
+
+        fieldset = AccountFieldSet.NONE
+        pos = 1
+
+        if self.nonce > 0:
+            fieldset = AccountFieldSet.NONCE
+            num_nonce_bytes = (self.nonce.bit_length() + 7) // 8
+            account_bytes[pos] = num_nonce_bytes
+            nonce = self.nonce
+            for i in range(num_nonce_bytes, 0, -1):
+                account_bytes[pos+i] = nonce
+                nonce >>= 8
+            pos += num_nonce_bytes + 1
+
+        if self.balance > 0:
+            fieldset |= AccountFieldSet.BALANCE
+            num_balance_bytes = (self.balance.bit_length() + 7) // 8
+            account_bytes[pos] = num_balance_bytes
+            pos += 1
+            account_bytes[pos : pos+num_balance_bytes] = self.balance.to_bytes(num_balance_bytes, 'big') # TBD: check
+            pos += num_balance_bytes
+
+        if self.incarnation > 0:
+            fieldset = AccountFieldSet.INCARNATION
+            num_incarnation_bytes = (self.incarnation + 7) // 8
+            account_bytes[pos] = num_incarnation_bytes
+            incarnation = self.incarnation
+            for i in range(num_incarnation_bytes, 0, -1):
+                account_bytes[pos+i] = incarnation
+                incarnation >>= 8
+            pos += num_incarnation_bytes + 1
+
+        if self.code_hash:
+            fieldset |= AccountFieldSet.CODE_HASH
+            account_bytes[pos] = HASH_SIZE
+            account_bytes[pos+1:] = bytes.fromhex(self.code_hash)
+
+        account_bytes[0] = fieldset
 
     def __str__(self):
         beautify = (lambda v: v.hex() if isinstance(v, bytes) else v)

@@ -154,7 +154,7 @@ class StorageChangeSet:
         """ Find specified key in changeset buffer. """
         address_to_find = key[:self.key_prefix_length]
         key_to_find = key[self.key_prefix_length + INCARNATION_SIZE : self.key_prefix_length + INCARNATION_SIZE + HASH_SIZE]
-        incarnation = ~int.from_bytes(key[self.key_prefix_length : self.key_prefix_length + INCARNATION_SIZE], 'big')
+        incarnation = int.from_bytes(key[self.key_prefix_length : self.key_prefix_length + INCARNATION_SIZE], 'big')
 
         find_addr = (lambda i:\
             self.buffer[4+i*(4+self.key_prefix_length) : 4+i*(4+self.key_prefix_length)+self.key_prefix_length] >= address_to_find)
@@ -171,10 +171,13 @@ class StorageChangeSet:
                 self.buffer[self.incarnations_start + 12 * i : self.incarnations_start + 12 * i + 4], 'big') >= address_index)
             inc_index = algo.binary_search(0, self.num_of_not_default_incarnations, find_incarnation)
 
-            if inc_index > self.num_of_not_default_incarnations:
-                return None
-            incarnation_start = self.incarnations_start + 12 * inc_index
-            if incarnation != self.buffer[incarnation_start : incarnation_start + 4]:
+            found_incarnation = StorageChangeSet.DEFAULT_INCARNATION
+            address_index_start = self.incarnations_start + 12 * inc_index
+            found_address_index = int.from_bytes(self.buffer[address_index_start : address_index_start + 4], 'big')
+            if inc_index < self.num_of_not_default_incarnations and found_address_index == address_index:
+                found_inc_start = self.incarnations_start + 12 * inc_index + 4
+                found_incarnation = int.from_bytes(self.buffer[found_inc_start : found_inc_start + INCARNATION_SIZE], 'big')
+            if found_incarnation != incarnation:
                 return None
 
         from_index = 0

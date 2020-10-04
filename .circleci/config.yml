@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@1.0.0
+  codecov: codecov/codecov@1.1.1
 
 jobs:
   build-and-test:
@@ -20,10 +21,12 @@ jobs:
           name: Run unit tests
           command: |
             coverage run -m pytest
-            coverage report
             coverage html
+            coverage xml
       - store_artifacts:
           path: htmlcov
+      - codecov/upload:
+          file: coverage.xml
 
 workflows:
   main:

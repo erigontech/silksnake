@@ -1,11 +1,12 @@
 [![CircleCI](https://circleci.com/gh/torquem-ch/silksnake.svg?style=shield)](https://circleci.com/gh/torquem-ch/silksnake)
-![version](https://img.shields.io/badge/version-0.0.1-blue)
+![version](https://img.shields.io/github/v/release/torquem-ch/silksnake?sort=semver)
 ![semver](https://img.shields.io/badge/semver-2.0.0-blue)
+[![License](https://img.shields.io/github/license/torquem-ch/silksnake?color=important)](https://img.shields.io/github/license/torquem-ch/silksnake)
 
 <br>
 
-# silksnake
-__silksnake__ is a Python library to access turbo-geth/silkworm data remotely
+# Silksnake
+Python library to access [Turbo-Geth](https://github.com/ledgerwatch/turbo-geth)/[Silkworm](https://github.com/torquem-ch/silkworm) data remotely.
 
 ## Platform Requirements
 
@@ -21,8 +22,15 @@ Python 3.6.9
 After Python installation, it is recommended [Upgrading pip](https://pip.pypa.io/en/stable/installing/#upgrading-pip)
 
 
-## Setup
+## Structure
+The project is organized in the following folders:
+- __docs__
+- __silksnake__
+- __tests__
+- __tools__
 
+
+## Setup
 Please perform the following commands from silksnake root folder.
 
 ### Dependencies
@@ -40,9 +48,17 @@ $ python setup.py
 
 ### Test
 Run unit tests using
-  
+
 ```shell-session
-$ pytest tests
+$ pytest
+```
+
+### Coverage
+Run test coverage using
+
+```shell-session
+$ coverage run -m pytest
+$ coverage report
 ```
 
 ### Linter

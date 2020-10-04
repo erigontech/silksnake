@@ -1,6 +1,6 @@
 # Silksnake
 
-Python library to access [Turbo-Geth](https://github.com/ledgerwatch/turbo-geth)/[Silkworm](https://github.com/torquem-ch/silkworm) data remotely.
+Python library to access [Turbo-Geth](https://github.com/ledgerwatch/turbo-geth)/[Silkworm](https://github.com/torquem-ch/silkworm) data remotely using their [Key-Value (KV)](./silksnake/remote/proto/kv.proto) protocol over [gRPC](https://grpc.io/).
 
 [![CircleCI](https://circleci.com/gh/torquem-ch/silksnake.svg?style=shield)](https://circleci.com/gh/torquem-ch/silksnake)
 [![CodeCov](https://codecov.io/gh/torquem-ch/silksnake/branch/master/graph/badge.svg)](https://codecov.io/gh/torquem-ch/silksnake)
@@ -26,14 +26,14 @@ After Python installation, it is recommended [Upgrading pip](https://pip.pypa.io
 
 ## Structure
 The project is organized in the following folders:
-- __docs__ contains the programming guide of Silksnake and the user guide of Silksnake tools
-- __silksnake__ contains the Silksnake source code
-- __tests__ contains the unit and integration tests
-- __tools__ contains the Silksnake command-line tools for accessing TurboGeth/Silksworm data using Key-Value (KV) I/F
+- [__docs__](./docs) contains the programming guide of Silksnake and the user guide of Silksnake tools
+- [__silksnake__](./silksnake) contains the Silksnake source code
+- [__tests__](./tests) contains the unit and integration tests
+- [__tools__](./tools) contains the Silksnake command-line tools for retrieving data using KV gRPC protocol
 
 
 ## Setup
-Please perform the following commands from silksnake root folder.
+Please perform the following commands from Silksnake root folder.
 
 ### Dependencies
 Install dependencies using
@@ -71,7 +71,7 @@ $ pylint silksnake tests tools
 ```
 
 ### Binding Generation (not required)
-Run binding generation for turbo-geth/silkworm KV gRPC interface using
+Run binding generation for KV gRPC protocol using
 
 ```shell-session
 $ python -m grpc_tools.protoc --proto_path=. --python_out=. --grpc_python_out=. silksnake/remote/proto/kv.proto

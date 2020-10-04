@@ -13,6 +13,8 @@ class Address:
         return Address(bytes.fromhex(hex_string))
 
     def __init__(self, address_bytes: bytes(ADDRESS_SIZE)):
+        if len(address_bytes) < ADDRESS_SIZE:
+            raise ValueError('address too short: expected {0} bytes, got {1}'.format(ADDRESS_SIZE, len(address_bytes)))
         if len(address_bytes) > ADDRESS_SIZE:
             address_bytes = address_bytes[len(address_bytes)-ADDRESS_SIZE:]
 

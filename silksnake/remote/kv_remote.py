@@ -14,6 +14,10 @@ class RemoteCursor:
     """ This class represents a remote read-only cursor on the KV.
     """
     def __init__(self, kv_stub: kv_pb2_grpc.KVStub, bucket_name: str):
+        if kv_stub is None:
+            raise ValueError('kv_stub is null')
+        if bucket_name is None:
+            raise ValueError('bucket_name is null')
         self.kv_stub = kv_stub
         self.bucket_name = bucket_name
         self.prefix = DEFAULT_PREFIX

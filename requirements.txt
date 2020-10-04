@@ -3,4 +3,5 @@ grpcio
 grpcio_testing
 pylint
 pytest
+pytest-mock
 rlp

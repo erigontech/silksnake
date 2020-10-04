@@ -19,9 +19,9 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-            $HOME/.local/bin/coverage run -m pytest
-            $HOME/.local/bin/coverage report
-            $HOME/.local/bin/coverage html
+            coverage run -m pytest
+            coverage report
+            coverage html
       - store_artifacts:
           path: htmlcov
 

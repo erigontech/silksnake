@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   python: circleci/python@1.0.0
-  codecov: codecov/codecov@1.1.1
 
 jobs:
   build-and-test:
@@ -25,8 +24,9 @@ jobs:
             coverage xml
       - store_artifacts:
           path: htmlcov
-      - codecov/upload:
-          file: coverage.xml
+      - run:
+          name: Upload coverage to Codecov
+          command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
   main:

@@ -25,6 +25,8 @@ class RemoteCursor:
 
     def with_prefix(self, prefix: bytes):
         """ Configure the cursor with the specified prefix."""
+        if prefix is None:
+            raise ValueError('prefix is null')
         self.prefix = prefix
         return self
 

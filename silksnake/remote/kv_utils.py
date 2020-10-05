@@ -27,7 +27,7 @@ def kv_walk(target: str, bucket: str, prefix: bytes, walker: Callable[[bytes, by
     try:
         cursor = remote_kv.view().cursor(bucket).with_prefix(prefix).enable_streaming(True)
         for pair in cursor.next():
-            if pair.key == b'':
+            if not pair.key:
                 break
             stop = walker(pair.key, pair.value)
             if stop:

@@ -62,6 +62,8 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
                 return None
             if len(code_hash) > 0:
                 acc.code_hash = hashing.bytes_to_hash(code_hash)
-            acc.encode_to_storage(data)
+            data = bytearray(acc.length_for_storage())
+            acc.to_storage(data)
+            data = bytes(data)
 
     return data

@@ -49,29 +49,47 @@ class Account:
             pos, incarnation_bytes = read_next(pos, account_bytes[pos])
             incarnation = int.from_bytes(incarnation_bytes, 'big')
 
-        storage_root = ''
-        if fieldset & AccountFieldSet.STORAGE_ROOT:
-            pos, storage_root_bytes = read_next(pos, account_bytes[pos])
-            storage_root = storage_root_bytes.hex()
-
         code_hash = ''
         if fieldset & AccountFieldSet.CODE_HASH:
             pos, code_hash_bytes = read_next(pos, account_bytes[pos])
             code_hash = code_hash_bytes.hex()
 
-        return Account(nonce, balance, incarnation, storage_root, code_hash)
+        return Account(nonce, balance, incarnation, code_hash, '')
 
-    def __init__(self, nonce: int, balance: int, incarnation: int, storage_root: str, code_hash: str):
+    def __init__(self, nonce: int, balance: int, incarnation: int, code_hash: str, storage_root: str):
         self.nonce = nonce
         self.balance = balance
         self.incarnation = incarnation
-        self.storage_root = storage_root
         self.code_hash = code_hash
+        self.storage_root = storage_root
 
-    def encode_to_storage(self, account_bytes: bytes) -> None:
-        """ encode_to_storage """
+    def length_for_storage(self):
+        """ length_for_storage """
+        length = 1 # always 1 byte for fieldset
+
+        if self.nonce > 0:
+            num_nonce_bytes = (self.nonce.bit_length() + 7) // 8
+            length += 1 + num_nonce_bytes
+
+        if self.balance > 0:
+            num_balance_bytes = (self.balance.bit_length() + 7) // 8
+            length += 1 + num_balance_bytes
+
+        if self.incarnation > 0:
+            num_incarnation_bytes = (self.incarnation.bit_length() + 7) // 8
+            length += 1 + num_incarnation_bytes
+
+        if self.code_hash:
+            length += 1 + HASH_SIZE
+
+        return length
+
+    def to_storage(self, account_bytes: bytes) -> None:
+        """ to_storage """
         if len(account_bytes) == 0:
             raise ValueError('zero length account_bytes')
+        if len(account_bytes) != self.length_for_storage():
+            raise ValueError('invalid account_bytes length, expected {} got {}'.format(self.length_for_storage(), len(account_bytes)))
 
         fieldset = AccountFieldSet.NONE
         pos = 1
@@ -95,8 +113,8 @@ class Account:
             pos += num_balance_bytes
 
         if self.incarnation > 0:
-            fieldset = AccountFieldSet.INCARNATION
-            num_incarnation_bytes = (self.incarnation + 7) // 8
+            fieldset |= AccountFieldSet.INCARNATION
+            num_incarnation_bytes = (self.incarnation.bit_length() + 7) // 8
             account_bytes[pos] = num_incarnation_bytes
             incarnation = self.incarnation
             for i in range(num_incarnation_bytes, 0, -1):

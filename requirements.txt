@@ -1,7 +1,7 @@
 coverage
 grpcio
-grpcio_testing
 pylint
 pytest
 pytest-mock
+pytest-grpc
 rlp

@@ -13,12 +13,14 @@ Python library to access [Turbo-Geth](https://github.com/ledgerwatch/turbo-geth)
 ## Platform Requirements
 
 ### Python Interpreter
-Install __Python 3.x__ from [here](https://www.python.org/downloads/) and check the installation using
+Silksnake requires __Python 3.x__. Install it from [here](https://www.python.org/downloads/) and check the installation using
 
 ```shell-session
 $ python --version
 Python 3.6.9
 ```
+
+Hereafter `python` command refers to the Python 3.x interpreter.
 
 ### Python Package Installer (pip)
 After Python installation, it is recommended [Upgrading pip](https://pip.pypa.io/en/stable/installing/#upgrading-pip)

@@ -1,4 +1,5 @@
 coverage
+eth-hash[pycryptodome]
 grpcio
 pylint
 pytest

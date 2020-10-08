@@ -104,6 +104,8 @@ class RemoteClient:
     """ This class represents the remote KV client.
     """
     def __init__(self, target: str = DEFAULT_TARGET, options: SecurityOptions = SecurityOptions()):
+        if not target:
+            raise ValueError('target is empty')
         self.target = target
         self.options = options
 

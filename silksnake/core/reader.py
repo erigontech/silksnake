@@ -5,6 +5,7 @@ from ..core import account
 from ..core import kvstore
 from ..core import history
 from ..helpers.dbutils import composite_keys
+from ..state import supply
 from ..types.address import Address
 
 class StateReader:
@@ -25,3 +26,7 @@ class StateReader:
         storage_key = composite_keys.create_plain_composite_storage_key(address_bytes, incarnation, location_hash)
         encoded_location = history.get_as_of(self.database, True, storage_key, self.block_number+1)
         return encoded_location
+
+    def read_eth_supply(self) -> int:
+        """ read_eth_supply """
+        return supply.read_eth_supply(self.database.view(), self.block_number)

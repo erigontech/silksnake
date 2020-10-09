@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-            coverage run -m pytest
+            coverage run -m pytest tests/unit
             coverage html
             coverage xml
       - store_artifacts:

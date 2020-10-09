@@ -54,7 +54,7 @@ $ python setup.py
 Run unit tests using
 
 ```shell-session
-$ pytest
+$ pytest tests/unit
 ```
 
 ### Coverage

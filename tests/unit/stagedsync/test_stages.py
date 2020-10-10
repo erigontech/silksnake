@@ -46,14 +46,16 @@ def test_get_stage_progress(stage: stages.SyncStage, value: str, expected_value:
     """Unit test for test_get_stage_progress"""
     stage_key = stage.value if stage is not None else None
     mock_view = pytest_mock.mock.Mock()
-    mock_view.get.return_value = stage_key, bytes.fromhex(value)
+    #mock_view.get.return_value = stage_key, bytes.fromhex(value)
     mock_database = pytest_mock.mock.Mock()
     mock_database.view.return_value = mock_view
     if should_pass:
+        mock_view.get.return_value = stage_key, bytes.fromhex(value)
         assert stages.get_stage_progress(mock_database, stage) == (expected_value, bytes(0))
     else:
-        with pytest.raises((AttributeError, ValueError)):
-            stages.get_stage_progress(mock_database, stage)
+        mock_view.get.return_value = b'', bytes.fromhex(value)
+        with pytest.raises((ValueError)):
+            stages.get_stage_progress(mock_database, stage if stage else stages.SyncStage.EXECUTION)
 
 @pytest.mark.parametrize("data_hex,block_number,rest,should_pass", [
     # Valid test list
@@ -61,6 +63,7 @@ def test_get_stage_progress(stage: stages.SyncStage, value: str, expected_value:
 
     # Invalid test list
     (None, 0, b'', False),
+    ('0102', 0, b'', False),
 ])
 def test_unmarshal_data(data_hex: str, block_number: int, rest: bytes, should_pass: bool) -> None:
     """Unit test for unmarshal_data"""

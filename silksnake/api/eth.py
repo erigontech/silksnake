@@ -42,9 +42,7 @@ class EthereumAPI:
         """Returns false is already sync'd, otherwise the (currentBlock, highestBlock) couple."""
         try:
             highest_block, _ = stages.get_stage_progress(self.remote_kv, stages.SyncStage.HEADERS)
-            print('highest_block', highest_block)
             current_block, _ = stages.get_stage_progress(self.remote_kv, stages.SyncStage.FINISH)
-            print('current_block', current_block)
             if current_block >= highest_block:
                 return False
             return highest_block, current_block

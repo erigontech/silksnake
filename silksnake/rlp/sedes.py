@@ -113,10 +113,6 @@ def decode_canonical_block_number(block_number_bytes: bytes) -> int:
     assert block_number_bytes[UINT8_SIZE] == CANONICAL_SUFFIX_INT, 'Invalid canonical block number suffix'
     return uint8.deserialize(block_number_bytes[:UINT8_SIZE])
 
-def decode_block_hash(block_hash_bytes: bytes) -> bytes:
-    """ Decode the given 32-byte as block hash."""
-    return hash32.deserialize(block_hash_bytes)
-
 def decode_block_key(block_key_bytes: bytes) -> (int, str):
     """ Decode the given 40-byte as block number and hash concatenated."""
     # The block_key RLP format slightly uncommon requires splitting the input bytes in 2 chuncks.

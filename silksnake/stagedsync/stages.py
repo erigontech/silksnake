@@ -6,20 +6,6 @@ import enum
 from ..core import kvstore
 from ..helpers.dbutils import tables
 
-SYNC_STAGE_HEADERS: bytes               = "Headers".encode()             # Downloads headers, verifying their POW validity and chaining
-SYNC_STAGE_BLOCK_HASHES: bytes          = "BlockHashes".encode()         # Writes header numbers, fills blockHash => number table
-SYNC_STAGE_BODIES: bytes                = "Bodies".encode()              # Downloads block bodies, TxHash and UncleHash are getting verified
-SYNC_STAGE_SENDERS: bytes               = "Senders".encode()             # "From" recovered from signatures, bodies re-written
-SYNC_STAGE_EXECUTION: bytes             = "Execution".encode()           # Executing each block w/o building a trie
-SYNC_STAGE_INTERMEDIATE_HASHES: bytes   = "IntermediateHashes".encode()  # Generate intermediate hashes, calculate the state root hash
-SYNC_STAGE_HASH_STATE: bytes            = "HashState".encode()           # Apply Keccak256 to all the keys in the state
-SYNC_STAGE_ACCOUNT_HISTORY_INDEX: bytes = "AccountHistoryIndex".encode() # Generating history index for accounts
-SYNC_STAGE_STORAGE_HISTORY_INDEX: bytes = "StorageHistoryIndex".encode() # Generating history index for storage
-SYNC_STAGE_LOG_INDEX: bytes             = "LogIndex".encode()            # Generating logs index (from receipts)
-SYNC_STAGE_TX_LOOKUP: bytes             = "TxLookup".encode()            # Generating transactions lookup index
-SYNC_STAGE_TX_POOL: bytes               = "TxPool".encode()              # Starts Backend
-SYNC_STAGE_FINISH: bytes                = "Finish".encode()              # Nominal stage after all other stages
-
 class SyncStage(enum.Enum):
     """The synchronization stage."""
     HEADERS               = "Headers".encode()             # Downloads headers, verifying their POW validity and chaining

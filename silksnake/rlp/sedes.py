@@ -46,24 +46,17 @@ class Transaction(RlpSerializable):
         ('s', rlp.sedes.big_endian_int),
     ]
 
-class Uncle(RlpSerializable):
-    """ RLP sedes for uncle blocks.
-    """
-    fields = [
-        ('a', rlp.sedes.binary),
-    ]
-
 class BlockHeader(RlpSerializable):
     """ RLP sedes for block headers.
     """
     fields = [
         ('parent_hash', hash32),
-        ('uncles_hash', hash32),
+        ('ommers_hash', hash32),
         ('coinbase', address),
         ('state_root', trie_root),
-        ('transaction_root', trie_root),
-        ('receipt_root', trie_root),
-        ('bloom', uint256),
+        ('transactions_root', trie_root),
+        ('receipts_root', trie_root),
+        ('logs_bloom', uint256),
         ('difficulty', rlp.sedes.big_endian_int),
         ('block_number', rlp.sedes.big_endian_int),
         ('gas_limit', rlp.sedes.big_endian_int),
@@ -74,9 +67,16 @@ class BlockHeader(RlpSerializable):
         ('nonce', rlp.sedes.Binary(UINT8_SIZE, allow_empty=True))
     ]
 
+class Ommer(RlpSerializable):
+    """ RLP sedes for ommer blocks.
+    """
+    fields = [
+        ('a', rlp.sedes.binary),
+    ]
+
 transaction_list = rlp.sedes.CountableList(Transaction)
-uncle_list = rlp.sedes.CountableList(Uncle)
-block_body = rlp.sedes.List([transaction_list, uncle_list])
+ommer_block_header_list = rlp.sedes.CountableList(BlockHeader)
+block_body = rlp.sedes.List([transaction_list, ommer_block_header_list])
 
 CANONICAL_SUFFIX = b'\x6e'
 CANONICAL_SUFFIX_INT = int.from_bytes(CANONICAL_SUFFIX, 'big')

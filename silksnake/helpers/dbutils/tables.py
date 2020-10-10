@@ -1,33 +1,20 @@
 # -*- coding: utf-8 -*-
 """The Turbo-Geth/Silkworm database metadata."""
 
-ACCOUNTS_HISTORY_LABEL: str = 'hAT'
-BLOCK_BODIES_LABEL: str = 'b'
-BLOCK_HEADERS_LABEL: str = 'h'
-BLOCK_HEADER_NUMBERS_LABEL: str = 'H'
-BLOCK_RECEIPTS_LABEL: str = 'r'
-ETH_SUPPLY_LABEL: str = 'org.ffconsulting.tg.db.ETH_SUPPLY.v2'
-PLAIN_STATE_LABEL: str = 'PLAIN-CST2'
-PLAIN_ACCOUNTS_CHANGE_SET_LABEL: str = 'PLAIN-ACS'
-PLAIN_CONTRACT_CODE_LABEL: str = 'PLAIN-contractCode'
-PLAIN_STORAGE_CHANGE_SET_LABEL: str = 'PLAIN-SCS'
-STORAGE_HISTORY_LABEL: str = 'hST'
-TRANSACTION_LOOKUP_LABEL: str = 'l'
-TRANSACTION_SENDERS_LABEL: str = 'txSenders'
-
-ACCOUNTS_HISTORY_NAME: str = 'History Of Accounts'
-BLOCK_BODIES_NAME: str = 'Block Bodies'
-BLOCK_HEADERS_NAME: str = 'Headers'
-BLOCK_HEADER_NUMBERS_NAME: str = 'Header Numbers'
-BLOCK_RECEIPTS_NAME: str = 'Receipts'
-ETH_SUPPLY_NAME: str = 'org.ffconsulting.tg.db.ETH_SUPPLY.v2'
-PLAIN_STATE_NAME: str = 'Plain State'
-PLAIN_ACCOUNTS_CHANGE_SET_NAME: str = 'Account Changes'
-PLAIN_CONTRACT_CODE_NAME: str = 'Plain Code Hash'
-PLAIN_STORAGE_CHANGE_SET_NAME: str = 'Storage Changes'
-STORAGE_HISTORY_NAME: str = 'History Of Storage'
-TRANSACTION_LOOKUP_NAME: str = 'Transaction Index'
-TRANSACTION_SENDERS_NAME: str = 'Senders'
+ACCOUNTS_HISTORY_LABEL: str = 'hAT'                              # 'History Of Accounts'
+BLOCK_BODIES_LABEL: str = 'b'                                    # 'Block Bodies'
+BLOCK_HEADERS_LABEL: str = 'h'                                   # 'Headers'
+BLOCK_HEADER_NUMBERS_LABEL: str = 'H'                            # 'Header Numbers'
+BLOCK_RECEIPTS_LABEL: str = 'r'                                  # 'Receipts'
+ETH_SUPPLY_LABEL: str = 'org.ffconsulting.tg.db.ETH_SUPPLY.v2'   # 'History of ETH Supply'
+PLAIN_STATE_LABEL: str = 'PLAIN-CST2'                            # 'Plain State'
+PLAIN_ACCOUNTS_CHANGE_SET_LABEL: str = 'PLAIN-ACS'               # 'Account Changes'
+PLAIN_CONTRACT_CODE_LABEL: str = 'PLAIN-contractCode'            # 'Plain Code Hash'
+PLAIN_STORAGE_CHANGE_SET_LABEL: str = 'PLAIN-SCS'                # 'Storage Changes'
+STORAGE_HISTORY_LABEL: str = 'hST'                               # 'History Of Storage'
+SYNC_STAGE_PROGRESS_LABEL: str = 'SSP2'                          # 'Sync Stage Progress'
+TRANSACTION_LOOKUP_LABEL: str = 'l'                              # 'Transaction Index'
+TRANSACTION_SENDERS_LABEL: str = 'txSenders'                     # 'Senders'
 
 bucketLabels: [str] = [
     ACCOUNTS_HISTORY_LABEL,
@@ -44,19 +31,3 @@ bucketLabels: [str] = [
     TRANSACTION_LOOKUP_LABEL,
     TRANSACTION_SENDERS_LABEL,
 ]
-
-bucketDescriptors: [str] = {
-    ACCOUNTS_HISTORY_LABEL: ACCOUNTS_HISTORY_NAME,
-    BLOCK_BODIES_LABEL: BLOCK_BODIES_NAME,
-    BLOCK_HEADERS_LABEL: BLOCK_HEADERS_NAME,
-    BLOCK_HEADER_NUMBERS_LABEL: BLOCK_HEADER_NUMBERS_NAME,
-    BLOCK_RECEIPTS_LABEL: BLOCK_RECEIPTS_NAME,
-    ETH_SUPPLY_LABEL: ETH_SUPPLY_NAME,
-    PLAIN_STATE_LABEL: PLAIN_STATE_NAME,
-    PLAIN_ACCOUNTS_CHANGE_SET_LABEL: PLAIN_ACCOUNTS_CHANGE_SET_NAME,
-    PLAIN_CONTRACT_CODE_LABEL: PLAIN_CONTRACT_CODE_NAME,
-    PLAIN_STORAGE_CHANGE_SET_LABEL: PLAIN_STORAGE_CHANGE_SET_NAME,
-    STORAGE_HISTORY_LABEL: STORAGE_HISTORY_NAME,
-    TRANSACTION_LOOKUP_LABEL: TRANSACTION_LOOKUP_NAME,
-    TRANSACTION_SENDERS_LABEL: TRANSACTION_SENDERS_NAME,
-}

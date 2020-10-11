@@ -67,13 +67,6 @@ class BlockHeader(RlpSerializable):
         ('nonce', rlp.sedes.Binary(UINT8_SIZE, allow_empty=True))
     ]
 
-class Ommer(RlpSerializable):
-    """ RLP sedes for ommer blocks.
-    """
-    fields = [
-        ('a', rlp.sedes.binary),
-    ]
-
 transaction_list = rlp.sedes.CountableList(Transaction)
 ommer_block_header_list = rlp.sedes.CountableList(BlockHeader)
 block_body = rlp.sedes.List([transaction_list, ommer_block_header_list])
@@ -127,10 +120,10 @@ def decode_block_header(block_header_bytes: bytes) -> BlockHeader:
     """ Decode the given bytes as block header."""
     return rlp.decode(block_header_bytes, BlockHeader)
 
-def decode_block_body(block_body_bytes: bytes):
+def decode_block_body(block_body_bytes: bytes) -> block_body:
     """ Decode the given bytes as block body composed by: (transactions, uncles)."""
     return rlp.decode(block_body_bytes, block_body)
 
-def decode_block_total_difficulty(total_difficulty_bytes: bytes):
+def decode_block_total_difficulty(total_difficulty_bytes: bytes) -> int:
     """ Decode the given bytes as block total difficulty."""
     return rlp.decode(total_difficulty_bytes, rlp.sedes.big_endian_int)

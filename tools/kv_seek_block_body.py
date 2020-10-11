@@ -23,14 +23,14 @@ def kv_seek_block_body(block_height: int, count: int = 1, target: str = DEFAULT_
 
         decoded_block_number, block_hash = sedes.decode_block_key(key)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)
-        block_transactions, block_uncles = sedes.decode_block_body(value)
+        block_transactions, block_ommers = sedes.decode_block_body(value)
 
         print('RSP block_hash:', block_hash.hex(), 'transactions(' + str(len(block_transactions)) + '): [')
         for transaction in block_transactions:
             print('tx#' + str(block_transactions.index(transaction)), transaction)
-        print('] uncles(' + str(len(block_uncles)) + '): [')
-        for uncle in block_uncles:
-            print('uncle#' + str(block_uncles.index(uncle)), uncle)
+        print('] ommers(' + str(len(block_ommers)) + '): [')
+        for ommer in block_ommers:
+            print('ommer#' + str(block_ommers.index(ommer)), ommer)
         print(']' if index == count - 1 else ']\n')
 
 if __name__ == '__main__':

@@ -16,9 +16,6 @@ class TurboAPI:
 
     def get_eth_supply(self, block_number_or_hash: str) -> str:
         """ Returns the 64-byte total supply of ETH currency at specified block_number_or_hash."""
-        try:
-            state_reader = reader.StateReader(self.remote_kv, int(block_number_or_hash)) # just block number for now
-            eth_supply = state_reader.read_eth_supply()
-            return eth_supply
-        except ValueError:
-            return 0
+        state_reader = reader.StateReader(self.remote_kv, int(block_number_or_hash)) # just block number for now
+        eth_supply = state_reader.read_eth_supply()
+        return eth_supply

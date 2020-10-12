@@ -10,6 +10,7 @@ from silksnake.api import local
 from silksnake.core import account
 from silksnake.core import reader
 from silksnake.stagedsync import stages
+from silksnake.state import supply
 
 # pylint: disable=line-too-long,no-self-use,unused-argument,invalid-name
 
@@ -40,13 +41,10 @@ def mock_state_reader(mocker: pytest_mock.MockerFixture, incarnation: int, value
         mock_read_account_data.side_effect = ValueError
 
 @pytest.fixture
-def mock_get_supply(mocker: pytest_mock.MockerFixture, block_number_or_hash: str, value: int, should_pass: bool) -> None:
+def mock_get_supply(mocker: pytest_mock.MockerFixture, block_number_or_hash: str, value: int) -> None:
     """ mock_get_supply """
     mock_read_eth_supply = mocker.patch.object(reader.StateReader, 'read_eth_supply')
-    if should_pass:
-        mock_read_eth_supply.return_value = value
-    else:
-        mock_read_eth_supply.side_effect = ValueError
+    mock_read_eth_supply.return_value = value
 
 @pytest.mark.usefixtures('mock_get_stage_progress')
 @pytest.mark.parametrize("block_number,should_pass", [
@@ -97,15 +95,15 @@ def test_eth_syncing(highest_block: int, current_block: int, result: Any, should
         assert syncing == 0
 
 @pytest.mark.usefixtures('mock_get_supply')
-@pytest.mark.parametrize("block_number_or_hash,value,should_pass", [
+@pytest.mark.parametrize("block_number_or_hash,value", [
     # Valid test list
-    ('0', 0, True),
-    ('2000001', 1780454672837, True),
+    ('0', 0),
+    ('2000001', 1780454672837),
 
     # Invalid test list
-    ('-1', 0, False),
+    ('-1', supply.ETH_SUPPLY_NOT_AVAILABLE),
 ])
-def test_turbo_getSupply(block_number_or_hash: str, value: int, should_pass: bool):
+def test_turbo_getSupply(block_number_or_hash: str, value: int):
     """ Unit test for turbo_getSupply. """
     supply_value = local.turbo_getSupply(block_number_or_hash)
     assert supply_value == value

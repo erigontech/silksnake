@@ -24,5 +24,4 @@ def test_read_eth_supply(block_number: int, result_key: str, result_value: str, 
     if should_pass:
         assert supply.read_eth_supply(mock_view, block_number) == int.from_bytes(result_value_bytes, 'big')
     else:
-        with pytest.raises((RuntimeError)):
-            supply.read_eth_supply(mock_view, block_number)
+        assert supply.read_eth_supply(mock_view, block_number) == supply.ETH_SUPPLY_NOT_AVAILABLE

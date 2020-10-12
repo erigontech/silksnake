@@ -7,17 +7,15 @@ import pytest_mock
 from silksnake.api import turbo
 from silksnake.core import reader
 from silksnake.remote import kv_remote
+from silksnake.state import supply
 
 # pylint: disable=line-too-long,no-self-use,unused-argument
 
 @pytest.fixture
-def mock_get_supply(mocker: pytest_mock.MockerFixture, block_number_or_hash: str, value: int, should_pass: bool) -> None:
+def mock_get_supply(mocker: pytest_mock.MockerFixture, block_number_or_hash: str, value: int) -> None:
     """ mock_get_supply """
     mock_read_eth_supply = mocker.patch.object(reader.StateReader, 'read_eth_supply')
-    if should_pass:
-        mock_read_eth_supply.return_value = value
-    else:
-        mock_read_eth_supply.side_effect = ValueError
+    mock_read_eth_supply.return_value = value
 
 class TestTurboAPI:
     """ Unit test case for TurboAPI.
@@ -58,15 +56,15 @@ class TestTurboAPI:
             api.close()
 
     @pytest.mark.usefixtures('mock_get_supply')
-    @pytest.mark.parametrize("block_number_or_hash,value,should_pass", [
+    @pytest.mark.parametrize("block_number_or_hash,value", [
         # Valid test list
-        ('0', 0, True),
-        ('2000001', 1780454672837, True),
+        ('0', 0),
+        ('2000001', 1780454672837),
 
         # Invalid test list
-        ('-1', 0, False),
+        ('-1', supply.ETH_SUPPLY_NOT_AVAILABLE),
     ])
-    def test_get_eth_supply(self, block_number_or_hash: str, value: int, should_pass: bool):
+    def test_get_eth_supply(self, block_number_or_hash: str, value: int):
         """ Unit test for get_eth_supply. """
         supply_value = turbo.TurboAPI().get_eth_supply(block_number_or_hash)
         assert supply_value == value

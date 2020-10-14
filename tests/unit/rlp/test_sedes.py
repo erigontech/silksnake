@@ -19,8 +19,36 @@ def test_rlp_serializable():
         ]
 
     serializable = SimpleRlpSerializable(2, b'')
+    assert serializable.hash
+    assert serializable.hash
     assert str(serializable)
     assert repr(serializable)
+
+def test_block_header():
+    """ Unit test for BlockHeader. """
+    header1 = sedes.BlockHeader()
+    assert str(header1)
+    assert repr(header1)
+    assert header1.block_number == 0
+    assert header1.block_hash_hex
+    header2 = sedes.BlockHeader(block_number=100)
+    assert header2.block_number == 100
+
+def test_block_body():
+    """ Unit test for BlockHeader. """
+    body = sedes.BlockBody([], [])
+    assert str(body)
+    assert repr(body)
+
+def test_block():
+    """ Unit test for BlockHeader. """
+    block1 = sedes.Block()
+    assert str(block1)
+    assert repr(block1)
+    block2 = sedes.Block(sedes.BlockHeader(block_number=100), sedes.BlockBody([], []))
+    assert block2.header.block_number == 100
+    assert str(block2)
+    assert repr(block2)
 
 @pytest.mark.parametrize("block_number,result,should_pass", [
     # Valid test list
@@ -205,6 +233,27 @@ def test_decode_difficulty_block_key(block_key: str, block_number: int, block_ha
     True),
 
     # Invalid test list
+    ('',
+    '89eb91c78eb54e038c62bdd6340b0fd4e982202ad46284dd5309b997b99bf893',
+    '1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
+    '0000000000000000000000000000000000000000',
+    'de06e68660429b198612e4b73919395799f9ad87bcaa80dc873e37b281060517',
+    '66beb9243c8901affb8e93fdd4619920dd535e9ffacf7f3950707723c6503575',
+    'bab1248cb2f851544996d3a6962c8736146c262665a68650cc24269fecf2f5ce',
+    '0400000000000000000000000000000400000200000004000000000000004000000000001000000000000000000000000000020000040000400000000020000100000000000000000000002802\
+        000000008000000000000008000000000000000000000000000000000001100000000000000000080000000000001000004008000000040000000000000000000000000000000008000000000001\
+            80000000000200000100000000000001000100000000020000000001000000000C000000080000000200000000040000000000108004000000100000000000000000000000001010000000000000\
+                0000002000000000000000008000000000060000000000',
+    2,
+    '1e8481',
+    '7a1200',
+    '0b469d',
+    '5e1df5a8',
+    '000000000000000000000000000000000000000000000000000000000000000007246dd875b0e3b053471143338268c67331ad2529823a73db6cc731c8314f8b768eb6a4c8756cfcafa9185c5f69c13959e01c\
+        388b63a414d6693fc29944b41e01',
+    '0000000000000000000000000000000000000000000000000000000000000000',
+    '0000000000000000',
+    False),
     ('d9025ca089eb91c78eb54e038c62bdd6340b0fd4e982202ad46284dd5309b997b99bf893a01dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d4934794\
         0000000000000000000000000000000000000000a0de06e68660429b198612e4b73919395799f9ad87bcaa80dc873e37b281060517a066beb9243c8901affb8e93fdd4619920\
             dd535e9ffacf7f3950707723c6503575a0bab1248cb2f851544996d3a6962c8736146c262665a68650cc24269fecf2f5ceb901000400000000000000000000000000000400\
@@ -295,6 +344,7 @@ def test_decode_block_header(block_header_hex: str, parent_hash: str, ommers_has
     True),
 
     # Invalid test list
+    ('', [], [], False),
     (None, [], [], False),
 ])
 def test_decode_block_body(block_key_hex: str, transactions: list, ommers: list, should_pass: bool):
@@ -302,9 +352,8 @@ def test_decode_block_body(block_key_hex: str, transactions: list, ommers: list,
     block_key_bytes = bytes.fromhex(block_key_hex) if block_key_hex else None
     if should_pass:
         decoded_block_body = sedes.decode_block_body(block_key_bytes)
-        block_transactions, block_ommers = decoded_block_body
-        assert len(block_transactions) == len(transactions)
-        assert len(block_ommers) == len(ommers)
+        assert len(decoded_block_body.transactions) == len(transactions)
+        assert len(decoded_block_body.ommer_block_headers) == len(ommers)
     else:
         with pytest.raises((rlp.exceptions.DecodingError)):
             sedes.decode_block_body(block_key_bytes)

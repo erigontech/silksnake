@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 """The bench_tools bench."""
 
+import logging
+import os
 import runpy
+import signal
 import sys
 
 import context # pylint: disable=unused-import
@@ -28,7 +31,20 @@ module_command_list = [
     ['tools.kv_seek'                    , 'b', '000000000033a2db'],
 ]
 
+def terminate_process(signal_number: int, frame): # pylint: disable=unused-argument
+    """ terminate_process """
+    print()
+    logging.info('%s: signal %d, terminating...', __file__, signal_number)
+    sys.exit()
+
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)-15s %(message)s', level=logging.INFO)
+
+    signal.signal(signal.SIGINT, terminate_process)
+    signal.signal(signal.SIGQUIT, terminate_process)
+
+    logging.info('%s: START - PID is %d', __file__, os.getpid())
+
     for index, module_command in enumerate(module_command_list):
         module_name = module_command[0]
         module_args = module_command[1:]
@@ -37,3 +53,5 @@ if __name__ == '__main__':
         runpy.run_module(module_name,run_name='__main__')
         if index < len(module_command_list) - 1:
             print()
+
+    logging.info('%s: END', __file__)

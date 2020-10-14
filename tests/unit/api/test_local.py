@@ -12,6 +12,8 @@ from silksnake.core import reader
 from silksnake.stagedsync import stages
 from silksnake.state import supply
 
+from .test_eth import mock_read_block_by_number, mock_read_block_by_hash, mock_transaction_count_by_number, mock_transaction_count_by_hash
+
 # pylint: disable=line-too-long,no-self-use,unused-argument,invalid-name
 
 @pytest.fixture
@@ -62,6 +64,65 @@ def test_eth_blockNumber(block_number: int, should_pass: bool):
         assert latest_block_number == block_number
     else:
         assert latest_block_number == 0
+
+@pytest.mark.usefixtures(mock_read_block_by_number.__name__)
+@pytest.mark.parametrize("block_number,expected_number", [
+    # Valid test list
+    (0, 0),
+    (100000000, 100000000),
+
+    # Invalid test list
+    (-1, None),
+])
+def test_eth_getBlockByNumber(block_number: int, expected_number: int):
+    """ Unit test for eth_getBlockByNumber. """
+    if block_number < 0:
+        assert local.eth_getBlockByNumber(block_number) == expected_number
+    else:
+        assert local.eth_getBlockByNumber(block_number).header.block_number == block_number
+
+@pytest.mark.usefixtures(mock_read_block_by_hash.__name__)
+@pytest.mark.parametrize("block_hash,expected_hash", [
+    # Valid test list
+    ('ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 'ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'),
+
+    # Invalid test list
+    ('', None),
+    (None, None),
+])
+def test_eth_getBlockByHash(block_hash: str, expected_hash: str):
+    """ Unit test for eth_getBlockByHash. """
+    if expected_hash is None:
+        assert local.eth_getBlockByHash(block_hash) == expected_hash
+    else:
+        assert local.eth_getBlockByHash(block_hash).header.hash.hex() == expected_hash
+
+@pytest.mark.usefixtures(mock_transaction_count_by_number.__name__)
+@pytest.mark.parametrize("block_number,transaction_count", [
+    # Valid test list
+    (0, 0),
+    (100000000, 18),
+
+    # Invalid test list
+    (None, -1),
+])
+def test_eth_getBlockTransactionCountByNumber(block_number: int, transaction_count: int):
+    """ Unit test for eth_getBlockTransactionCountByNumber. """
+    assert local.eth_getBlockTransactionCountByNumber(block_number) == transaction_count
+
+@pytest.mark.usefixtures(mock_transaction_count_by_hash.__name__)
+@pytest.mark.parametrize("block_hash,transaction_count", [
+    # Valid test list
+    ('', 0),
+    ('ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 18),
+
+    # Invalid test list
+    (None, -1),
+])
+def test_eth_getBlockTransactionCountByHash(block_hash: str, transaction_count: int):
+    """ Unit test for eth_getBlockTransactionCountByHash. """
+    block_hash_bytes = bytes.fromhex(block_hash) if block_hash else None
+    assert local.eth_getBlockTransactionCountByHash(block_hash_bytes) == transaction_count
 
 @pytest.mark.usefixtures('mock_state_reader')
 @pytest.mark.parametrize("address,index,block_number_or_hash,expected_value,incarnation,value,should_pass", [

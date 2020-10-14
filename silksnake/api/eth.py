@@ -4,9 +4,10 @@
 from typing import Tuple, Union
 
 from ..core.constants import HASH_SIZE
-from ..core import reader
+from ..core import chain, reader
 from ..helpers import hashing
 from ..remote import kv_remote
+from ..rlp import sedes
 from ..stagedsync import stages
 
 class EthereumAPI:
@@ -26,6 +27,24 @@ class EthereumAPI:
             return block_heigth
         except ValueError:
             return 0
+
+    def get_block_by_number(self, block_number: int) -> sedes.Block:
+        """ Get the block having the given number in the chain. """
+        return chain.Blockchain(self.remote_kv).read_block_by_number(block_number)
+
+    def get_block_by_hash(self, block_hash: str) -> sedes.Block:
+        """ Get the block having the given hash in the chain. """
+        return chain.Blockchain(self.remote_kv).read_block_by_hash(block_hash)
+
+    def get_block_transaction_count_by_number(self, block_number: int) -> int:
+        """ Get the number of transactions included in block having the given number in the chain. """
+        block = chain.Blockchain(self.remote_kv).read_block_by_number(block_number)
+        return len(block.body.transactions) if block else -1
+
+    def get_block_transaction_count_by_hash(self, block_hash: str) -> int:
+        """ Get the number of transactions included in block having the given hash in the chain. """
+        block = chain.Blockchain(self.remote_kv).read_block_by_hash(block_hash)
+        return len(block.body.transactions) if block else -1
 
     def get_storage_at(self, address: str, index: str, block_number_or_hash: str) -> str:
         """ Returns a 32-byte long, zero-left-padded value at index storage location of address or '0x' if no value."""

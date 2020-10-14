@@ -14,6 +14,26 @@ def eth_blockNumber() -> int:
     with contextlib.closing(EthereumAPI()) as api:
         return api.block_number()
 
+def eth_getBlockByNumber(block_number: int):
+    """ See EthereumAPI#block_by_number. """
+    with contextlib.closing(EthereumAPI()) as api:
+        return api.get_block_by_number(block_number)
+
+def eth_getBlockByHash(block_hash: str):
+    """ See EthereumAPI#block_by_hash. """
+    with contextlib.closing(EthereumAPI()) as api:
+        return api.get_block_by_hash(block_hash)
+
+def eth_getBlockTransactionCountByNumber(block_number: int) -> int:
+    """ See EthereumAPI#get_block_transaction_count_by_number. """
+    with contextlib.closing(EthereumAPI()) as api:
+        return api.get_block_transaction_count_by_number(block_number)
+
+def eth_getBlockTransactionCountByHash(block_hash: str) -> int:
+    """ See EthereumAPI#get_block_transaction_count_by_hash. """
+    with contextlib.closing(EthereumAPI()) as api:
+        return api.get_block_transaction_count_by_hash(block_hash)
+
 def eth_getStorageAt(address: str, index: str, block_number_or_hash: str) -> str:
     """ See EthereumAPI#get_storage_at. """
     with contextlib.closing(EthereumAPI()) as api:

@@ -8,6 +8,7 @@ import pytest_mock
 
 from silksnake.api import eth
 from silksnake.core import account
+from silksnake.core import chain
 from silksnake.core import reader
 from silksnake.remote import kv_remote
 from silksnake.stagedsync import stages
@@ -39,6 +40,46 @@ def mock_state_reader(mocker: pytest_mock.MockerFixture, incarnation: int, value
         mock_read_account_storage.return_value = value
     else:
         mock_read_account_data.side_effect = ValueError
+
+@pytest.fixture
+def mock_read_block_by_number(mocker: pytest_mock.MockerFixture, expected_number: int) -> None:
+    """ mock_read_block_by_number """
+    header_mock = mocker.Mock()
+    header_mock.block_number = expected_number
+    block_mock = mocker.Mock()
+    block_mock.header = header_mock
+    mock_block_by_number = mocker.patch.object(chain.Blockchain, 'read_block_by_number')
+    mock_block_by_number.return_value = block_mock if expected_number is not None else None
+
+@pytest.fixture
+def mock_read_block_by_hash(mocker: pytest_mock.MockerFixture, expected_hash: str) -> None:
+    """ mock_read_block_by_hash """
+    header_mock = mocker.Mock()
+    header_mock.hash = bytes.fromhex(expected_hash) if expected_hash else None
+    block_mock = mocker.Mock()
+    block_mock.header = header_mock
+    mock_block_by_number = mocker.patch.object(chain.Blockchain, 'read_block_by_hash')
+    mock_block_by_number.return_value = block_mock if expected_hash is not None else None
+
+@pytest.fixture
+def mock_transaction_count_by_number(mocker: pytest_mock.MockerFixture, block_number: int, transaction_count: int) -> None:
+    """ mock_read_block_by_number """
+    body_mock = mocker.Mock()
+    body_mock.transactions = [None]*transaction_count
+    block_mock = mocker.Mock()
+    block_mock.body = body_mock
+    mock_block_by_number = mocker.patch.object(chain.Blockchain, 'read_block_by_number')
+    mock_block_by_number.return_value = block_mock if block_number is not None else None
+
+@pytest.fixture
+def mock_transaction_count_by_hash(mocker: pytest_mock.MockerFixture, block_hash: str, transaction_count: int) -> None:
+    """ mock_read_block_by_hash """
+    body_mock = mocker.Mock()
+    body_mock.transactions = [None]*transaction_count
+    block_mock = mocker.Mock()
+    block_mock.body = body_mock
+    mock_block_by_number = mocker.patch.object(chain.Blockchain, 'read_block_by_hash')
+    mock_block_by_number.return_value = block_mock if block_hash is not None else None
 
 class TestEthereumAPI:
     """ Unit test case for EthereumAPI.
@@ -94,6 +135,71 @@ class TestEthereumAPI:
             assert api.block_number() == block_number
         else:
             assert api.block_number() == 0
+
+    @pytest.mark.usefixtures('mock_read_block_by_number')
+    @pytest.mark.parametrize("block_number,expected_number", [
+        # Valid test list
+        (0, 0),
+        (100000000, 100000000),
+
+        # Invalid test list
+        (-1, None),
+    ])
+    def test_get_block_by_number(self, block_number: int, expected_number: int):
+        """ Unit test for get_block_by_number. """
+        api = eth.EthereumAPI()
+        if block_number < 0:
+            assert api.get_block_by_number(block_number) == expected_number
+        else:
+            assert api.get_block_by_number(block_number).header.block_number == expected_number
+
+    @pytest.mark.usefixtures('mock_read_block_by_hash')
+    @pytest.mark.parametrize("block_hash,expected_hash", [
+        # Valid test list
+        ('ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 'ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'),
+
+        # Invalid test list
+        ('', None),
+        (None, None),
+    ])
+    def test_get_block_by_hash(self, block_hash: str, expected_hash: str):
+        """ Unit test for get_block_by_hash. """
+        block_hash_bytes = bytes.fromhex(block_hash) if block_hash is not None else None
+        expected_hash_bytes = bytes.fromhex(expected_hash) if expected_hash is not None else None
+        api = eth.EthereumAPI()
+        if expected_hash is None:
+            assert api.get_block_by_hash(block_hash_bytes) == expected_hash
+        else:
+            assert api.get_block_by_hash(block_hash_bytes).header.hash == expected_hash_bytes
+
+    @pytest.mark.usefixtures('mock_transaction_count_by_number')
+    @pytest.mark.parametrize("block_number,transaction_count", [
+        # Valid test list
+        (0, 0),
+        (100000000, 18),
+
+        # Invalid test list
+        (None, -1),
+    ])
+    def test_get_block_transaction_count_by_number(self, block_number: int, transaction_count: int):
+        """ Unit test for get_block_transaction_count_by_number. """
+        api = eth.EthereumAPI()
+        assert api.get_block_transaction_count_by_number(block_number) == transaction_count
+
+    @pytest.mark.usefixtures('mock_transaction_count_by_hash')
+    @pytest.mark.parametrize("block_hash,transaction_count", [
+        # Valid test list
+        ('', 0),
+        ('ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 18),
+
+        # Invalid test list
+        (None, -1),
+    ])
+    def test_get_block_transaction_count_by_hash(self, block_hash: str, transaction_count: int):
+        """ Unit test for get_block_transaction_count_by_hash. """
+        block_hash_bytes = bytes.fromhex(block_hash) if block_hash else None
+        api = eth.EthereumAPI()
+        assert api.get_block_transaction_count_by_hash(block_hash_bytes) == transaction_count
 
     @pytest.mark.usefixtures('mock_state_reader')
     @pytest.mark.parametrize("address,index,block_number_or_hash,expected_value,incarnation,value,should_pass", [

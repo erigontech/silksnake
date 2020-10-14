@@ -35,6 +35,11 @@ if __name__ == '__main__':
             logging.info('syncing: SYNCED')
         latest_block_number = local.eth_blockNumber()
         logging.info('latest block: %d', latest_block_number)
+        latest_block1 = local.eth_getBlockByNumber(latest_block_number)
+        logging.info('latest block by number: %s', latest_block1 if latest_block1 else 'NOT AVAILABLE')
+        if latest_block1:
+            latest_block2 = local.eth_getBlockByHash(latest_block1.header.hash)
+            logging.info('latest block by hash: %s', latest_block2)
         eth_supply = local.turbo_getSupply(latest_block_number)
         logging.info('latest ETH supply: %s', 'NOT YET AVAILABLE' if eth_supply < 0 else str(eth_supply))
         logging.info('waiting 5 sec...')

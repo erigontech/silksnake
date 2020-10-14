@@ -5,4 +5,5 @@ pylint
 pytest
 pytest-mock
 pytest-grpc
+requests
 rlp

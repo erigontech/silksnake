@@ -3,7 +3,7 @@
 
 import pytest
 
-from silksnake.core.changeset import AccountChangeSet, Change
+from silksnake.core.changeset import AccountChangeSet, Change, ChangeSet
 
 # pylint: disable=line-too-long,no-self-use
 
@@ -23,12 +23,40 @@ class TestChange:
         key = bytes.fromhex(key_hex) if key_hex is not None else None
         value = bytes.fromhex(value_hex) if value_hex is not None else None
         if should_pass:
-            changeset = Change(key, value)
-            assert changeset.key == key
-            assert changeset.value == value
+            change = Change(key, value)
+            assert change.key == key
+            assert change.value == value
+            assert str(change)
         else:
             with pytest.raises((TypeError, ValueError)):
                 Change(key, value)
+
+class TestChangeSet:
+    """ Unit test case for ChangeSet.
+    """
+    def test_init(self):
+        """ Unit test for __init__. """
+        changeset = ChangeSet()
+        assert len(changeset.changes) == 0
+        assert str(changeset)
+
+    def test_add(self):
+        """ Unit test for add. """
+        changeset = ChangeSet()
+        change = Change(b'\x00', b'')
+        changeset.add(change)
+        assert len(changeset.changes) == 1
+        assert changeset.changes.pop() is change
+
+    def test_iter(self):
+        """ Unit test for iter. """
+        changeset = ChangeSet()
+        change1 = Change(b'\x00', b'')
+        change2 = Change(b'\x01', b'')
+        changeset.add(change1)
+        changeset.add(change2)
+        for change in changeset:
+            assert change
 
 class TestAccountChangeSet:
     """ Unit test case for AccountChangeSet.

@@ -32,15 +32,19 @@ class RemoteCursor:
 
     def enable_streaming(self, streaming: bool):
         """ Configure the cursor with the specified streaming flag."""
+        if streaming is None:
+            raise ValueError('streaming is null')
         self.streaming = streaming
         return self
 
     def seek(self, key: bytes) -> (bytes, bytes):
         """ Seek the value in the bucket associated to the specified key."""
+        if key is None:
+            raise ValueError('key is null')
         request = kv_pb2.SeekRequest(bucketName=self.bucket_name, seekKey=key, prefix=self.prefix)
         request_iterator = iter([request])
         response_iterator = self.kv_stub.Seek(request_iterator)
-        response = response_iterator.next()
+        response = next(response_iterator)
         return response.key, response.value
 
     def seek_exact(self, key: bytes) -> bytes:

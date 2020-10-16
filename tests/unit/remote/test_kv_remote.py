@@ -25,6 +25,15 @@ def cursor(mocker: pytest_mock.MockerFixture, key_out: str, value: str):
     type(mock_kvstub).Seek = lambda k, p: iter([kv_pb2.Pair(key=key_out_bytes, value=value_bytes)])
     return RemoteCursor(mock_kvstub, 'T')
 
+@pytest.fixture
+def file_open(mocker: pytest_mock.MockerFixture, should_pass: bool):
+    """ open """
+    open_name = 'builtins.open'
+    mock_file_open = mocker.patch(open_name, mocker.mock_open(read_data=b'\x00'))
+    if not should_pass:
+        mock_file_open.side_effect = FileNotFoundError
+    return mock_file_open
+
 class TestRemoteCursor:
     """ Unit test for RemoteCursor. """
     def test_init(self):
@@ -326,7 +335,7 @@ class TestRemoteClient:
         ('env/ca-cert.pem', 'env/non-existent.crt', 'env/rpc-key.pem', False),
         ('env/ca-cert.pem', 'env/rpc.crt', 'env/non-existent.pem', False),
     ])
-    def test_open_secure(self, server_cert: str, client_cert: str, client_key: str, should_pass: bool):
+    def test_open_secure(self, file_open, server_cert: str, client_cert: str, client_key: str, should_pass: bool):
         """ Unit test for open. """
         if should_pass:
             client = RemoteClient(options=SecurityOptions(server_cert, client_cert, client_key))

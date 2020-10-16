@@ -3,9 +3,9 @@
 Python library to access [Turbo-Geth](https://github.com/ledgerwatch/turbo-geth)/[Silkworm](https://github.com/torquem-ch/silkworm) data remotely using their [Key-Value (KV)](./silksnake/remote/proto/kv.proto) protocol over [gRPC](https://grpc.io/).
 
 [![CircleCI](https://circleci.com/gh/torquem-ch/silksnake.svg?style=shield)](https://circleci.com/gh/torquem-ch/silksnake)
-[![CodeCov](https://codecov.io/gh/torquem-ch/silksnake/branch/master/graph/badge.svg)](https://codecov.io/gh/torquem-ch/silksnake)
-[![License](https://img.shields.io/github/license/torquem-ch/silksnake?color=important)](https://img.shields.io/github/license/torquem-ch/silksnake)
-![version](https://img.shields.io/github/v/release/torquem-ch/silksnake?sort=semver)
+[![Codecov master](https://img.shields.io/codecov/c/github/torquem-ch/silksnake/master.svg?style=shield&logo=codecov&logoColor=white)](https://codecov.io/gh/torquem-ch/silksnake)
+![version](https://img.shields.io/github/v/release/torquem-ch/silksnake?sort=semver&color=normal)
+[![License](https://img.shields.io/github/license/torquem-ch/silksnake?color=lightgrey)](https://img.shields.io/github/license/torquem-ch/silksnake)
 ![semver](https://img.shields.io/badge/semver-2.0.0-blue)
 
 <br>

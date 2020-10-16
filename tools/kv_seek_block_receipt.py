@@ -8,7 +8,7 @@ import context # pylint: disable=unused-import
 
 from silksnake.rlp import receipt
 from silksnake.rlp import sedes
-from silksnake.remote import kv_metadata
+from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
@@ -19,14 +19,14 @@ def kv_seek_block_receipt(kv_view: kv_remote.RemoteView, block_height: int, coun
     for index, block_number in enumerate(range(block_height, block_height + count)):
         encoded_canonical_block_number = sedes.encode_canonical_block_number(block_number)
         print('CANONICAL HEADER\nREQ1 block_number:', block_number, '(key: ' + str(encoded_canonical_block_number.hex()) + ')')
-        key, block_hash = kv_view.get(kv_metadata.BLOCK_HEADERS_LABEL, encoded_canonical_block_number)
+        key, block_hash = kv_view.get(tables.BLOCK_HEADERS_LABEL, encoded_canonical_block_number)
         decoded_block_number = sedes.decode_canonical_block_number(key)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)
         print('RSP1 block_hash:', block_hash.hex(), '\n')
 
         encoded_block_key = sedes.encode_block_key(block_number, block_hash)
         print('RECEIPT\nREQ2 block_number:', block_number, '(key: ' + str(encoded_block_key.hex()) + ')')
-        key, value = kv_view.get(kv_metadata.BLOCK_RECEIPTS_LABEL, encoded_block_key)
+        key, value = kv_view.get(tables.BLOCK_RECEIPTS_LABEL, encoded_block_key)
         decoded_block_number, decoded_block_hash = sedes.decode_block_key(key)
         block_receipt_list = receipt.decode_block_receipt(value)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)

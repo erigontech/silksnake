@@ -6,6 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
+from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_metadata import INVALID_BLOCK_NUMBER
@@ -20,14 +21,14 @@ def kv_seek_account_history(account_address: str, block_number: int, target: str
 
     print('RSP1 account history: [')
     walker = lambda key, value: print('key:', key.hex(), 'value:', value.hex())
-    kv_utils.kv_walk(target, kv_metadata.ACCOUNTS_HISTORY_LABEL, account_history_key, walker)
+    kv_utils.kv_walk(target, tables.ACCOUNTS_HISTORY_LABEL, account_history_key, walker)
     print(']')
 
     print('REQ2 account_address:', account_address, '(key: ' + str(account_history_key.hex()) + ')')
 
     print('RSP2 storage history: [')
     walker = lambda key, value: print('key:', key.hex(), 'value:', value.hex())
-    kv_utils.kv_walk(target, kv_metadata.STORAGE_HISTORY_LABEL, account_history_key, walker)
+    kv_utils.kv_walk(target, tables.STORAGE_HISTORY_LABEL, account_history_key, walker)
     print(']')
 
 if __name__ == '__main__':

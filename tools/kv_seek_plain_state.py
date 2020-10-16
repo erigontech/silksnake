@@ -6,6 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
+from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
@@ -17,7 +18,7 @@ def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', tar
     account_address_bytes = kv_metadata.encode_account_address(account_address)
 
     print('REQ1 account_address:', account_address)
-    key, value = kv_utils.kv_seek(kv_metadata.PLAIN_STATE_LABEL, account_address_bytes, target)
+    key, value = kv_utils.kv_seek(tables.PLAIN_STATE_LABEL, account_address_bytes, target)
     assert key == account_address_bytes, 'ERR account address {} does not match!'.format(key.hex())
     stored_account = account.Account.from_storage(value)
     print('RSP1 account:', stored_account)
@@ -27,7 +28,7 @@ def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', tar
     storage_key = account_address_bytes + incarnation_bytes + storage_location_bytes
 
     print('REQ2 storage_location:', storage_location)
-    key, value = kv_utils.kv_seek(kv_metadata.PLAIN_STATE_LABEL, storage_key, target)
+    key, value = kv_utils.kv_seek(tables.PLAIN_STATE_LABEL, storage_key, target)
     key_prefix_length = len(account_address_bytes) + len(incarnation_bytes)
     key_prefix = key[:key_prefix_length]
     assert key_prefix == storage_key[:key_prefix_length], 'ERR storage key prefix {} does not match!'.format(key_prefix.hex())

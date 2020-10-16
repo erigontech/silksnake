@@ -21,4 +21,17 @@ def test_table_labels():
     assert STORAGE_HISTORY_LABEL
     assert TRANSACTION_LOOKUP_LABEL
     assert TRANSACTION_SENDERS_LABEL
-    assert bucketLabels
+    assert ACCOUNTS_HISTORY_LABEL in tableLabels
+    assert BLOCK_BODIES_LABEL in tableLabels
+    assert BLOCK_HEADERS_LABEL in tableLabels
+    assert BLOCK_HEADER_NUMBERS_LABEL in tableLabels
+    assert BLOCK_RECEIPTS_LABEL in tableLabels
+    assert ETH_SUPPLY_LABEL in tableLabels
+    assert PLAIN_STATE_LABEL in tableLabels
+    assert PLAIN_ACCOUNTS_CHANGE_SET_LABEL in tableLabels
+    assert PLAIN_CONTRACT_CODE_LABEL in tableLabels
+    assert PLAIN_STORAGE_CHANGE_SET_LABEL in tableLabels
+    assert SYNC_STAGE_PROGRESS_LABEL in tableLabels
+    assert STORAGE_HISTORY_LABEL in tableLabels
+    assert TRANSACTION_LOOKUP_LABEL in tableLabels
+    assert TRANSACTION_SENDERS_LABEL in tableLabels

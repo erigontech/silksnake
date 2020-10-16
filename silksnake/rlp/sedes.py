@@ -50,7 +50,7 @@ class TransactionFieldsAPI(ABC):
     """ All transaction fields. """
     nonce: int
     gas_price: int
-    gas: int
+    gas_limit: int
     to: bytes
     value: int
     data: bytes

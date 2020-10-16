@@ -16,7 +16,7 @@ SYNC_STAGE_PROGRESS_LABEL: str = 'SSP2'                          # 'Sync Stage P
 TRANSACTION_LOOKUP_LABEL: str = 'l'                              # 'Transaction Index'
 TRANSACTION_SENDERS_LABEL: str = 'txSenders'                     # 'Senders'
 
-bucketLabels: [str] = [
+tableLabels: [str] = [
     ACCOUNTS_HISTORY_LABEL,
     BLOCK_BODIES_LABEL,
     BLOCK_HEADERS_LABEL,
@@ -28,6 +28,7 @@ bucketLabels: [str] = [
     PLAIN_CONTRACT_CODE_LABEL,
     PLAIN_STORAGE_CHANGE_SET_LABEL,
     STORAGE_HISTORY_LABEL,
+    SYNC_STAGE_PROGRESS_LABEL,
     TRANSACTION_LOOKUP_LABEL,
     TRANSACTION_SENDERS_LABEL,
 ]

@@ -7,7 +7,7 @@ import argparse
 import context # pylint: disable=unused-import
 
 from silksnake.rlp import sedes
-from silksnake.remote import kv_metadata
+from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
@@ -18,14 +18,14 @@ def kv_seek_block_header(kv_view: kv_remote.RemoteView, block_height: int, count
     for index, block_number in enumerate(range(block_height, block_height + count)):
         encoded_canonical_block_number = sedes.encode_canonical_block_number(block_number)
         print('CANONICAL HEADER\nREQ1 block_number:', block_number, '(key: ' + str(encoded_canonical_block_number.hex()) + ')')
-        key, block_hash = kv_view.get(kv_metadata.BLOCK_HEADERS_LABEL, encoded_canonical_block_number)
+        key, block_hash = kv_view.get(tables.BLOCK_HEADERS_LABEL, encoded_canonical_block_number)
         decoded_block_number = sedes.decode_canonical_block_number(key)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)
         print('RSP1 block_hash:', block_hash.hex(), '\n')
 
         encoded_block_key = sedes.encode_block_key(block_number, block_hash)
         print('FULL HEADER\nREQ2 block_number:', block_number, '(key: ' + str(encoded_block_key.hex()) + ')')
-        key, value = kv_view.get(kv_metadata.BLOCK_HEADERS_LABEL, encoded_block_key)
+        key, value = kv_view.get(tables.BLOCK_HEADERS_LABEL, encoded_block_key)
         decoded_block_number, decoded_block_hash = sedes.decode_block_key(key)
         block_header = sedes.decode_block_header(value)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)
@@ -34,7 +34,7 @@ def kv_seek_block_header(kv_view: kv_remote.RemoteView, block_height: int, count
 
         encoded_difficulty_block_key = sedes.encode_difficulty_block_key(encoded_block_key)
         print('TOTAL DIFFICULTY HEADER\nREQ3 block_number:', block_number, '(key: ' + str(encoded_difficulty_block_key.hex()) + ')')
-        key, value = kv_view.get(kv_metadata.BLOCK_HEADERS_LABEL, encoded_difficulty_block_key)
+        key, value = kv_view.get(tables.BLOCK_HEADERS_LABEL, encoded_difficulty_block_key)
         decoded_block_number, decoded_block_hash = sedes.decode_difficulty_block_key(key)
         block_total_difficulty = sedes.decode_block_total_difficulty(value)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)

@@ -8,7 +8,7 @@ from . import changeset
 from . import kvstore
 from . import history_index
 from ..helpers import hashing
-from ..helpers.dbutils import composite_keys
+from ..helpers.dbutils import composite_keys, tables
 from ..remote import kv_metadata
 
 from .constants import ADDRESS_SIZE, BLOCK_NUMBER_SIZE, HASH_SIZE
@@ -19,15 +19,15 @@ def get_as_of(database: kvstore.KV, storage: bool, key: bytes, block_number: int
 
     value = find_by_history(view, storage, key, block_number)
     if value is None:
-        _, value = view.get(kv_metadata.PLAIN_STATE_LABEL, key)
+        _, value = view.get(tables.PLAIN_STATE_LABEL, key)
     return value
 
 def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number: int) -> (bytes, bytes):
     """find_by_history"""
     if storage:
-        bucket = kv_metadata.STORAGE_HISTORY_LABEL
+        bucket = tables.STORAGE_HISTORY_LABEL
     else:
-        bucket = kv_metadata.ACCOUNTS_HISTORY_LABEL
+        bucket = tables.ACCOUNTS_HISTORY_LABEL
 
     index_chunck_key = history_index.index_chunck_key(key, block_number)
 
@@ -43,7 +43,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
     if found:
         if is_set and not storage:
             return None
-        change_set_bucket = kv_metadata.PLAIN_STORAGE_CHANGE_SET_LABEL if storage else kv_metadata.PLAIN_ACCOUNTS_CHANGE_SET_LABEL
+        change_set_bucket = tables.PLAIN_STORAGE_CHANGE_SET_LABEL if storage else tables.PLAIN_ACCOUNTS_CHANGE_SET_LABEL
         change_set_key = kv_metadata.encode_timestamp(change_set_block)
         _, change_set_data = view.get(change_set_bucket, change_set_key)
 
@@ -57,7 +57,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
     if not storage:
         acc = account.Account.from_storage(data)
         if acc.incarnation > 0 and not acc.code_hash:
-            _, code_hash = view.get(kv_metadata.PLAIN_CONTRACT_CODE_LABEL, composite_keys.create_storage_prefix(key, acc.incarnation))
+            _, code_hash = view.get(tables.PLAIN_CONTRACT_CODE_LABEL, composite_keys.create_storage_prefix(key, acc.incarnation))
             if not code_hash:
                 return None
             if len(code_hash) > 0:

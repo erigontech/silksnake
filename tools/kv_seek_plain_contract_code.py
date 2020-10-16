@@ -6,7 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.helpers.dbutils import composite_keys
+from silksnake.helpers.dbutils import composite_keys, tables
 from silksnake.core.constants import ADDRESS_SIZE
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
@@ -19,7 +19,7 @@ def kv_seek_plain_contract_code(account_address: str, incarnation: int, target: 
     plain_code_key = composite_keys.create_storage_prefix(account_address_bytes, incarnation)
 
     print('REQ plain_code_key:', plain_code_key.hex())
-    key, value = kv_utils.kv_seek(kv_metadata.PLAIN_CONTRACT_CODE_LABEL, plain_code_key, target)
+    key, value = kv_utils.kv_seek(tables.PLAIN_CONTRACT_CODE_LABEL, plain_code_key, target)
     assert key[:ADDRESS_SIZE] == plain_code_key[:ADDRESS_SIZE], 'ERR code key {} does not match!'.format(key.hex())
     if key != plain_code_key:
         print('WARN required incarnation does NOT exist, value is from {} '.format(key[ADDRESS_SIZE:].hex()))

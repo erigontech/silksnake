@@ -7,7 +7,7 @@ import argparse
 import context # pylint: disable=unused-import
 
 from silksnake.rlp import sedes
-from silksnake.remote import kv_metadata
+from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
 
@@ -18,7 +18,7 @@ def kv_seek_block_number(block_hash: str, target: str = DEFAULT_TARGET):
 
     print('REQ block_hash:', block_hash)
 
-    key, value = kv_utils.kv_seek(kv_metadata.BLOCK_HEADER_NUMBERS_LABEL, bytes.fromhex(block_hash), target)
+    key, value = kv_utils.kv_seek(tables.BLOCK_HEADER_NUMBERS_LABEL, bytes.fromhex(block_hash), target)
 
     assert key.hex() == block_hash, 'ERR block hash {} does not match!'.format(key.hex())
     block_number = sedes.decode_block_number(value)

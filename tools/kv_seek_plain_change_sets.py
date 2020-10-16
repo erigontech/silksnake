@@ -7,8 +7,7 @@ import argparse
 import context # pylint: disable=unused-import
 
 from silksnake.core import changeset
-from silksnake.helpers.dbutils import tables
-from silksnake.remote import kv_metadata
+from silksnake.helpers.dbutils import tables, timestamp
 from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
@@ -17,7 +16,7 @@ def kv_seek_plain_change_sets(kv_view: kv_remote.RemoteView, block_height: int, 
     """ Search for the provided block range in KV 'Account Changes' and 'Storage Changes' tables.
     """
     for index, block_number in enumerate(range(block_height, block_height + count)):
-        change_set_key = kv_metadata.encode_timestamp(block_number)
+        change_set_key = timestamp.encode_timestamp(block_number)
 
         print('ACCOUNT CHANGES\nREQ1 block_number:', block_number, '(key: ' + str(change_set_key.hex()) + ')')
         key, value = kv_view.get(tables.PLAIN_ACCOUNTS_CHANGE_SET_LABEL, change_set_key)

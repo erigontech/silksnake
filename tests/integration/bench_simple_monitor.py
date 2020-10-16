@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""bench_simple_monitor"""
+"""The bench_simple_monitor bench."""
 
 import logging
 import os

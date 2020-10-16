@@ -8,8 +8,7 @@ from . import changeset
 from . import kvstore
 from . import history_index
 from ..helpers import hashing
-from ..helpers.dbutils import composite_keys, tables
-from ..remote import kv_metadata
+from ..helpers.dbutils import composite_keys, tables, timestamp
 
 from .constants import ADDRESS_SIZE, BLOCK_NUMBER_SIZE, HASH_SIZE
 
@@ -44,7 +43,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
         if is_set and not storage:
             return None
         change_set_bucket = tables.PLAIN_STORAGE_CHANGE_SET_LABEL if storage else tables.PLAIN_ACCOUNTS_CHANGE_SET_LABEL
-        change_set_key = kv_metadata.encode_timestamp(change_set_block)
+        change_set_key = timestamp.encode_timestamp(change_set_block)
         _, change_set_data = view.get(change_set_bucket, change_set_key)
 
         if storage:

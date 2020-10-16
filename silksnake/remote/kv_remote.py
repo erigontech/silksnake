@@ -67,6 +67,8 @@ class RemoteView:
     """ This class represents a remote read-only view on the KV.
     """
     def __init__(self, kv_stub: kv_pb2_grpc.KVStub):
+        if kv_stub is None:
+            raise ValueError('kv_stub is null')
         self.kv_stub = kv_stub
 
     def cursor(self, bucket_name: str) -> RemoteCursor:
@@ -85,6 +87,10 @@ class RemoteKV:
     """ This class represents the remote KV store.
     """
     def __init__(self, channel: grpc.Channel, kv_stub: kv_pb2_grpc.KVStub):
+        if not channel:
+            raise ValueError('channel is null')
+        if not kv_stub:
+            raise ValueError('kv_stub is null')
         self.channel = channel
         self.kv_stub = kv_stub
 
@@ -100,6 +106,12 @@ class SecurityOptions:
     """ This class represents the channel security options.
     """
     def __init__(self, server_cert: str = None, client_cert: str = None, client_key: str = None):
+        if server_cert == '':
+            raise ValueError('server_cert is empty')
+        if client_cert == '':
+            raise ValueError('client_cert is empty')
+        if client_key == '':
+            raise ValueError('client_key is empty')
         self.server_cert = server_cert
         self.client_cert = client_cert
         self.client_key = client_key
@@ -109,13 +121,15 @@ class RemoteClient:
     """
     def __init__(self, target: str = DEFAULT_TARGET, options: SecurityOptions = SecurityOptions()):
         if not target:
-            raise ValueError('target is empty')
+            raise ValueError('target is null')
         self.target = target
         self.options = options
 
     def with_target(self, target: str):
         """ Configure the client to use the specified server (address:port) end point.
         """
+        if target is None:
+            raise ValueError('target is null')
         self.target = target
         return self
 
@@ -126,10 +140,13 @@ class RemoteClient:
             cert_chain = None
             private_key = None
             if self.options.client_cert:
-                cert_chain = _load(self.options.client_cert)
-                private_key = _load(self.options.client_key)
+                with open(self.options.client_cert, 'rb') as file:
+                    cert_chain = file.read()
+                with open(self.options.client_key, 'rb') as file:
+                    private_key = file.read()
 
-            root_cert = _load(self.options.server_cert)
+            with open(self.options.server_cert, 'rb') as file:
+                root_cert = file.read()
             credentials = grpc.ssl_channel_credentials(root_cert, private_key, cert_chain)
             channel = grpc.secure_channel(self.target, credentials)
         else:
@@ -137,9 +154,3 @@ class RemoteClient:
 
         kv_stub = kv_pb2_grpc.KVStub(channel)
         return RemoteKV(channel, kv_stub)
-
-def _load(path):
-    """ Load binary file from specified path."""
-    with open(path, 'rb') as file:
-        data = file.read()
-    return data

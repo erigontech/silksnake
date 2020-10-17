@@ -8,6 +8,8 @@ class Address:
     @classmethod
     def from_hex(cls, hex_string: str):
         """ Create an Address from the given hex string w or w/o 0x prefix. """
+        if hex_string is None:
+            raise ValueError('hex_string is null')
         hex_string = hex_string[2:] if hex_string.startswith('0x') else hex_string
         return Address(bytes.fromhex(hex_string))
 

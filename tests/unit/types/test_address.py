@@ -21,6 +21,7 @@ class TestAddress:
         ('zz0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', b'3\xee3\xfc>\x1a\xac\xdbu\xa1\xad6$\x89\xacT\xf0-mc', False),
         ('zz33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', b'3\xee3\xfc>\x1a\xac\xdbu\xa1\xad6$\x89\xacT\xf0-mc', False),
         ('ee33fc3e1aacdb75a1ad362489ac54f02d6d63', b'\xee3\xfc>\x1a\xac\xdbu\xa1\xad6$\x89\xacT\xf0-mc', False),
+        (None, b'\xee3\xfc>\x1a\xac\xdbu\xa1\xad6$\x89\xacT\xf0-mc', False),
     ])
     def test_from_hex(self, hex_string: str, address_bytes: bytes, should_pass: bool):
         """ Unit test for from_hex. """

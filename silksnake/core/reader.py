@@ -11,6 +11,10 @@ from ..types.address import Address
 class StateReader:
     """ StateReader """
     def __init__(self, database: kvstore.KV, block_number: int):
+        if database is None:
+            raise ValueError('database is null')
+        if block_number is None:
+            raise ValueError('block_number is null')
         self.database = database
         self.block_number = block_number
 

@@ -6,16 +6,17 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.helpers.dbutils import tables
-from silksnake.remote import kv_metadata
+from silksnake.core import account
+from silksnake.helpers import hashing
+from silksnake.helpers.dbutils import composite_keys, tables
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
-from silksnake.core import account
+from silksnake.types.address import Address
 
 def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', target: str = DEFAULT_TARGET):
     """ Search for the provided account address in KV 'Plain State' bucket of turbo-geth/silkworm running at target.
     """
-    account_address_bytes = kv_metadata.encode_account_address(account_address)
+    account_address_bytes = Address.from_hex(account_address).bytes
 
     print('REQ1 account_address:', account_address)
     key, value = kv_utils.kv_seek(tables.PLAIN_STATE_LABEL, account_address_bytes, target)
@@ -23,11 +24,12 @@ def kv_seek_plain_state(account_address: str, storage_location: str = '0x0', tar
     stored_account = account.Account.from_storage(value)
     print('RSP1 account:', stored_account)
 
-    incarnation_bytes = kv_metadata.encode_incarnation(stored_account.incarnation)
-    storage_location_bytes = kv_metadata.encode_storage_location(storage_location)
-    storage_key = account_address_bytes + incarnation_bytes + storage_location_bytes
+    incarnation = stored_account.incarnation
+    location_hash = hashing.hex_as_hash(storage_location)
+    storage_key = composite_keys.create_plain_composite_storage_key(account_address_bytes, incarnation, location_hash)
 
     print('REQ2 storage_location:', storage_location)
+    incarnation_bytes = composite_keys.encode_incarnation(incarnation)
     key, value = kv_utils.kv_seek(tables.PLAIN_STATE_LABEL, storage_key, target)
     key_prefix_length = len(account_address_bytes) + len(incarnation_bytes)
     key_prefix = key[:key_prefix_length]

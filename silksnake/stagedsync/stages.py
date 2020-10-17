@@ -26,7 +26,7 @@ def get_stage_progress(database: kvstore.KV, stage_key: SyncStage) -> (int, byte
     """ get_stage_progress """
     key, value = database.view().get(tables.SYNC_STAGE_PROGRESS_LABEL, stage_key.value)
     if key != stage_key.value:
-        raise ValueError('stage key mismatch, expected {0} got {1}'.format(stage_key.value.hex(), key.hex()))
+        raise ValueError(f'stage key mismatch, expected {stage_key.value.hex()} got {key.hex()}')
     return unmarshal_data(value)
 
 def unmarshal_data(data: bytes) -> (int, bytes):
@@ -34,6 +34,5 @@ def unmarshal_data(data: bytes) -> (int, bytes):
     if len(data) == 0:
         return (0, b'')
     if len(data) < 8:
-        raise ValueError('data too short, expected {0} got {1}'.format(8, len(data)))
-
+        raise ValueError(f'data too short, expected 8 got {len(data)}')
     return int.from_bytes(data[:8], 'big'), data[8:]

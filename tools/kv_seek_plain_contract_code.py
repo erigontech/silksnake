@@ -8,14 +8,14 @@ import context # pylint: disable=unused-import
 
 from silksnake.helpers.dbutils import composite_keys, tables
 from silksnake.core.constants import ADDRESS_SIZE
-from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
+from silksnake.types.address import Address
 
 def kv_seek_plain_contract_code(account_address: str, incarnation: int, target: str = DEFAULT_TARGET):
     """ Search for the provided account address in KV 'Plain State' table running at target.
     """
-    account_address_bytes = kv_metadata.encode_account_address(account_address)
+    account_address_bytes = Address.from_hex(account_address).bytes
     plain_code_key = composite_keys.create_storage_prefix(account_address_bytes, incarnation)
 
     print('REQ plain_code_key:', plain_code_key.hex())

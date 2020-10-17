@@ -7,6 +7,22 @@ from silksnake.helpers.dbutils import composite_keys
 
 # pylint: disable=line-too-long
 
+@pytest.mark.parametrize("incarnation,result,should_pass", [
+    # Valid test list
+    (0, '0000000000000000', True),
+
+    # Invalid test list
+    (None, '', False),
+])
+def test_encode_incarnation(incarnation: int, result: str, should_pass: bool):
+    """ Unit test for encode_incarnation. """
+    result_bytes = bytes.fromhex(result) if result is not None else None
+    if should_pass:
+        assert composite_keys.encode_incarnation(incarnation) == result_bytes
+    else:
+        with pytest.raises((TypeError)):
+            composite_keys.encode_incarnation(incarnation)
+
 @pytest.mark.parametrize("address,incarnation,prefix,should_pass", [
     # Valid test list
     ('dcc703c0e500b653ca82273b7bfad8045d85a470', 0, 'dcc703c0e500b653ca82273b7bfad8045d85a4700000000000000000', True),

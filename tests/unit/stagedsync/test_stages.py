@@ -46,7 +46,6 @@ def test_get_stage_progress(stage: stages.SyncStage, value: str, expected_value:
     """Unit test for test_get_stage_progress"""
     stage_key = stage.value if stage is not None else None
     mock_view = pytest_mock.mock.Mock()
-    #mock_view.get.return_value = stage_key, bytes.fromhex(value)
     mock_database = pytest_mock.mock.Mock()
     mock_database.view.return_value = mock_view
     if should_pass:

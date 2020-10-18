@@ -28,8 +28,8 @@ class StateReader:
         """ read_account_storage """
         address_bytes = Address.from_hex(address).bytes
         storage_key = composite_keys.create_plain_composite_storage_key(address_bytes, incarnation, location_hash)
-        encoded_location = history.get_as_of(self.database, True, storage_key, self.block_number+1)
-        return encoded_location
+        location_value = history.get_as_of(self.database, True, storage_key, self.block_number+1)
+        return location_value
 
     def read_eth_supply(self) -> int:
         """ read_eth_supply """

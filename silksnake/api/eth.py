@@ -10,6 +10,8 @@ from ..remote import kv_remote
 from ..rlp import sedes
 from ..stagedsync import stages
 
+# pylint: disable=broad-except
+
 class EthereumAPI:
     """ EthereumAPI"""
     def __init__(self, target: str = kv_remote.DEFAULT_TARGET):
@@ -25,7 +27,7 @@ class EthereumAPI:
         try:
             block_heigth, _ = stages.get_stage_progress(self.remote_kv, stages.SyncStage.FINISH)
             return block_heigth
-        except ValueError:
+        except Exception:
             return 0
 
     def get_block_by_number(self, block_number: int) -> sedes.Block:
@@ -34,7 +36,11 @@ class EthereumAPI:
 
     def get_block_by_hash(self, block_hash: str) -> sedes.Block:
         """ Get the block having the given hash in the chain. """
-        return chain.Blockchain(self.remote_kv).read_block_by_hash(block_hash)
+        try:
+            block_hash_bytes = hashing.hex_as_hash(block_hash)
+            return chain.Blockchain(self.remote_kv).read_block_by_hash(block_hash_bytes)
+        except Exception:
+            return None
 
     def get_block_transaction_count_by_number(self, block_number: int) -> int:
         """ Get the number of transactions included in block having the given number in the chain. """
@@ -54,7 +60,7 @@ class EthereumAPI:
             location_hash = hashing.hex_as_hash(str(index))
             value = state_reader.read_account_storage(address, account.incarnation, location_hash)
             return '0x' + value.hex().zfill(2*HASH_SIZE)
-        except ValueError:
+        except Exception:
             return '0x'
 
     def syncing(self) -> Union[bool, Tuple[int ,int]]:
@@ -65,5 +71,5 @@ class EthereumAPI:
             if current_block >= highest_block:
                 return False
             return highest_block, current_block
-        except ValueError:
+        except Exception:
             return False

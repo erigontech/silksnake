@@ -73,7 +73,7 @@ def mock_transaction_count_by_number(mocker: pytest_mock.MockerFixture, block_nu
 
 @pytest.fixture
 def mock_transaction_count_by_hash(mocker: pytest_mock.MockerFixture, block_hash: str, transaction_count: int) -> None:
-    """ mock_read_block_by_hash """
+    """ mock_transaction_count_by_hash """
     body_mock = mocker.Mock()
     body_mock.transactions = [None]*transaction_count
     block_mock = mocker.Mock()
@@ -144,12 +144,13 @@ class TestEthereumAPI:
 
         # Invalid test list
         (-1, None),
+        (None, None),
     ])
     def test_get_block_by_number(self, block_number: int, expected_number: int):
         """ Unit test for get_block_by_number. """
         api = eth.EthereumAPI()
-        if block_number < 0:
-            assert api.get_block_by_number(block_number) == expected_number
+        if block_number is None or block_number < 0:
+            assert api.get_block_by_number(block_number) is None
         else:
             assert api.get_block_by_number(block_number).header.block_number == expected_number
 
@@ -164,13 +165,12 @@ class TestEthereumAPI:
     ])
     def test_get_block_by_hash(self, block_hash: str, expected_hash: str):
         """ Unit test for get_block_by_hash. """
-        block_hash_bytes = bytes.fromhex(block_hash) if block_hash is not None else None
         expected_hash_bytes = bytes.fromhex(expected_hash) if expected_hash is not None else None
         api = eth.EthereumAPI()
         if expected_hash is None:
-            assert api.get_block_by_hash(block_hash_bytes) == expected_hash
+            assert api.get_block_by_hash(block_hash) is None
         else:
-            assert api.get_block_by_hash(block_hash_bytes).header.hash == expected_hash_bytes
+            assert api.get_block_by_hash(block_hash).header.hash == expected_hash_bytes
 
     @pytest.mark.usefixtures('mock_transaction_count_by_number')
     @pytest.mark.parametrize("block_number,transaction_count", [

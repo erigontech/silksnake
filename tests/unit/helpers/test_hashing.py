@@ -42,6 +42,22 @@ def test_hex_to_hash(data: str, hashed: str, should_pass: bool):
         with pytest.raises((AttributeError)):
             hashing.hex_to_hash(data)
 
+@pytest.mark.parametrize("data,hashed_hex,should_pass", [
+    # Valid test list
+    ('', '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470', True),
+    ('00', '0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a', True),
+
+    # Invalid test list
+    (None, '', False),
+])
+def test_hex_to_hash_str(data: str, hashed_hex: str, should_pass: bool):
+    """ Unit test for hex_to_hash_str. """
+    if should_pass:
+        assert hashing.hex_to_hash_str(data) == hashed_hex
+    else:
+        with pytest.raises((AttributeError)):
+            hashing.hex_to_hash_str(data)
+
 @pytest.mark.parametrize("data,hashed,should_pass", [
     # Valid test list
     ('c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470', 'c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470', True),

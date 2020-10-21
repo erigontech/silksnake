@@ -47,6 +47,7 @@ def test_block():
     assert repr(block1)
     block2 = sedes.Block(sedes.BlockHeader(block_number=100), sedes.BlockBody([], []))
     assert block2.header.block_number == 100
+    assert block2.hash == block2.header.hash
     assert str(block2)
     assert repr(block2)
 

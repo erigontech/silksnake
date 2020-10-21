@@ -10,9 +10,13 @@ def bytes_to_hash(data: bytes) -> bytes:
     return keccak(data)
 
 def hex_to_hash(data: str) -> bytes:
-    """ Returns the keccak256 digest of given hex string."""
+    """ Returns the keccak256 digest of given hex string as bytes."""
     data = data[2:] if data.startswith('0x') else data
     return keccak(bytes.fromhex(data))
+
+def hex_to_hash_str(data: str) -> str:
+    """ Returns the keccak256 digest of given hex string as hex string."""
+    return '0x' + hex_to_hash(data).hex()
 
 def hex_as_hash(hex_string: str) -> bytes:
     """ Cast the given hex string as 32-byte hash."""

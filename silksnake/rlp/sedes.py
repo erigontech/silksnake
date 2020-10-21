@@ -25,7 +25,7 @@ class RlpSerializable(rlp.Serializable):
 
     @property
     def hash(self) -> bytes:
-        """ Return the hash of the transaction. """
+        """ Return the hash of the RLP-serializable object. """
         if self._hash is None:
             self._hash = hashing.bytes_to_hash(rlp.encode(self))
         return self._hash
@@ -193,6 +193,11 @@ class Block:
 
     def __repr__(self):
         return str(self)
+
+    @property
+    def hash(self) -> bytes:
+        """ Return the hash of the block. """
+        return self.header.hash
 
 CANONICAL_SUFFIX = b'\x6e'
 CANONICAL_SUFFIX_INT = int.from_bytes(CANONICAL_SUFFIX, 'big')

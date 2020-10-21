@@ -7,30 +7,90 @@ import logging
 import os
 import signal
 import sys
+from typing import Dict
 
 import requests
 
 import context # pylint: disable=unused-import
 
 from silksnake.api import eth
+from silksnake.helpers import hashing
 from silksnake.remote.kv_remote import DEFAULT_TARGET
 
-def terminate_process(signal_number: int, frame): # pylint: disable=unused-argument
+# pylint: disable=unused-argument,too-many-return-statements,too-many-locals,too-many-nested-blocks
+
+def terminate_process(signal_number: int, frame):
     """ terminate_process """
     print()
     logging.info('%s: signal %d, terminating...', __file__, signal_number)
     sys.exit()
 
-def json_rpc_get_storage_at(cmp_node_url: str, address_hex: str, location: int, block_number: int):
+def json_rpc_get_storage_at(node_url: str, address_hex: str, location: int, block_number: int):
     """ request_eth_getStorageAt """
-    response = requests.post(cmp_node_url, json={
+    response = requests.post(node_url, json={
         'json': '2.0',
         'method': 'eth_getStorageAt',
         'params': ['0x' + address_hex, hex(location), hex(block_number)],
         'id': 1
     })
     assert response.status_code == requests.codes['ok']
-    return response.json()['result']
+    response_msg = response.json()
+    if 'error' in response_msg:
+        raise RuntimeError(response_msg['error'])
+    return response_msg['result']
+
+def json_rpc_storage_range_at(node_url: str, block_hash: str, tx_index: int, address: str, start_key: str, limit: int, req_id: int):
+    """ request_eth_getStorageAt """
+    response = requests.post(node_url, json={
+        'json': '2.0',
+        'method': 'debug_storageRangeAt',
+        'params': ['0x' + block_hash, tx_index, '0x' + address, start_key, limit],
+        'id': req_id
+    })
+    assert response.status_code == requests.codes['ok']
+    response_msg = response.json()
+    if 'error' in response_msg:
+        raise RuntimeError(response_msg['error'])
+    return response_msg['result']
+
+def compare_storage_ranges(json_state_map: Dict[str, Dict[str, str]], silksnake_state_map: Dict[str, Dict[str, str]]) -> bool:
+    """ compare_storage_ranges """
+    if len(json_state_map) != len(silksnake_state_map):
+        logging.error('Map size mismatch: json_state_map %d silksnake_state_map %d', len(json_state_map), len(silksnake_state_map))
+        return False
+    for hashed_key1, entry1 in json_state_map.items():
+        if not hashed_key1 in silksnake_state_map:
+            logging.error('Hashed key %s not present in silksnake_state_map', hashed_key1)
+            return False
+        key1 = entry1['key']
+        if key1 is None:
+            logging.error('Key null for hashed key %s', hashed_key1)
+            return False
+        if hashed_key1 != hashing.hex_to_hash_str(key1):
+            logging.error('Hashed key %s does not match key %s', hashed_key1, key1)
+            return False
+        entry2 = silksnake_state_map[hashed_key1]
+        if entry1['value'] != entry2['value']:
+            logging.error('Different value for %s [%s]: %s %s', hashed_key1, key1, entry1['value'], entry2['value'])
+            return False
+    for hashed_key2, entry2 in silksnake_state_map.items():
+        if not hashed_key2 in json_state_map:
+            logging.error('Hashed key %s not present in json_state_map', hashed_key2)
+            return False
+        key2 = entry2['key']
+        if hashed_key2 != hashing.hex_to_hash_str(key2):
+            logging.error('Hashed key %s does not match key %s', hashed_key2, key2)
+            return False
+    return True
+
+def print_storage_ranges(json_state_map: Dict[str, Dict[str, str]], silksnake_state_map: Dict[str, Dict[str, str]]) -> bool:
+    """ print_storage_ranges """
+    print('json_state_map dump:')
+    for key, entry in json_state_map.items():
+        print(f'{key}: {entry}')
+    print('silksnake_state_map dump:')
+    for key, entry in silksnake_state_map.items():
+        print(f'{key}: {entry}')
 
 def bench_json_rpc(from_block_number: int, target: str = DEFAULT_TARGET, cmp_node_url: str = None):
     """ bench_json_rpc """
@@ -49,17 +109,33 @@ def bench_json_rpc(from_block_number: int, target: str = DEFAULT_TARGET, cmp_nod
         assert result == storage_at
 
     storage_count = 0
+    req_id = 0
     for _, block_number in enumerate(range(from_block_number, latest_block_number)):
         block = eth_api.get_block_by_number(block_number)
-        print(f'\nblock_number: {block_number} #transaction: {len(block.body.transactions)}')
-        for index, transaction in enumerate(block.body.transactions, 1):
+        logging.info('Processing block_number: #%d with #transaction: %d', block_number, len(block.body.transactions))
+        for index, transaction in enumerate(block.body.transactions):
             if transaction.to.hex() and transaction.gas_limit > 21000:
                 storage_count += 1
                 if storage_count % 10 == 0:
-                    print(f'#{index:0{2}} to: {transaction.to.hex()}')
-                    storage_count = 0
-                    result = json_rpc_get_storage_at(cmp_node_url, transaction.to.hex(), 18, 2000001)
-                    print(result)
+                    logging.info('Processing non-trivial transaction: #%d to: %s', index, transaction.to.hex())
+                    next_key = '0x' + (32 * b'\x00').hex()
+                    json_state_map = {}
+                    silksnake_state_map = {}
+                    while next_key:
+                        req_id += 1
+                        logging.info('Processing next_key: %s req_id: %s', next_key, req_id)
+                        rng = json_rpc_storage_range_at(cmp_node_url, block.hash.hex(), index, transaction.to.hex(), next_key, 1024, req_id)
+                        for hashed_key, entry in rng['storage'].items():
+                            key = entry['key']
+                            json_state_map[hashed_key] = entry
+                            if key is None:
+                                logging.info('Null key: hashed_key %s entry: %s', hashed_key, entry)
+                            value = eth_api.get_storage_at('0x' + transaction.to.hex(), key, block_number)
+                            silksnake_state_map[hashed_key] = {'key': key, 'value': value}
+                        next_key = rng['nextKey']
+                    if not compare_storage_ranges(json_state_map, silksnake_state_map):
+                        print_storage_ranges(json_state_map, silksnake_state_map)
+                        return
 
     print()
 

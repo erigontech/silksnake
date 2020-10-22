@@ -52,10 +52,16 @@ class EthereumAPI:
         block = chain.Blockchain(self.remote_kv).read_block_by_hash(block_hash)
         return len(block.body.transactions) if block else -1
 
-    def get_storage_at(self, address: str, index: str, block_number_or_hash: str) -> str:
+    def get_storage_at(self, address: str, index: str, block_number_or_hash: Union[int, str]) -> str:
         """ Returns a 32-byte long, zero-left-padded value at index storage location of address or '0x' if no value."""
         try:
-            state_reader = reader.StateReader(self.remote_kv, int(block_number_or_hash)) # just block number for now
+            if isinstance(block_number_or_hash, int):
+                block_number = int(block_number_or_hash)
+            else:
+                block_hash = str(block_number_or_hash)
+                block_hash_bytes = hashing.hex_as_hash(block_hash)
+                block_number = chain.Blockchain(self.remote_kv).read_canonical_block_number(block_hash_bytes)
+            state_reader = reader.StateReader(self.remote_kv, block_number)
             account = state_reader.read_account_data(address)
             location_hash = hashing.hex_as_hash(str(index))
             value = state_reader.read_account_storage(address, account.incarnation, location_hash)

@@ -7,9 +7,7 @@ import pytest
 import pytest_mock
 
 from silksnake.api import eth
-from silksnake.core import account
-from silksnake.core import chain
-from silksnake.core import reader
+from silksnake.core import account, chain, reader
 from silksnake.remote import kv_remote
 from silksnake.stagedsync import stages
 
@@ -17,7 +15,7 @@ from silksnake.stagedsync import stages
 
 @pytest.fixture
 def mock_get_stage_progress(mocker: pytest_mock.MockerFixture, block_number: int) -> None:
-    """ mock_state_reader """
+    """ mock_get_stage_progress """
     mock_stage_progress = mocker.patch.object(stages, 'get_stage_progress')
     if block_number < 0:
         mock_stage_progress.side_effect = ValueError()
@@ -25,14 +23,16 @@ def mock_get_stage_progress(mocker: pytest_mock.MockerFixture, block_number: int
 
 @pytest.fixture
 def mock_staged_sync(mocker: pytest_mock.MockerFixture, highest_block: int, current_block: int) -> None:
-    """ mock_state_reader """
+    """ mock_staged_sync """
     mock_stage_progress = mocker.patch.object(stages, 'get_stage_progress')
     mock_stage_progress.return_value = highest_block, bytes(0)
     mock_stage_progress.side_effect = ValueError if highest_block is None else [(highest_block, bytes(0)), (current_block, bytes(0))]
 
 @pytest.fixture
-def mock_state_reader(mocker: pytest_mock.MockerFixture, incarnation: int, value: bytes, should_pass: bool) -> None:
-    """ mock_state_reader """
+def mock_chain_and_state_reader(mocker: pytest_mock.MockerFixture, block_number_or_hash: str, incarnation: int, value: bytes, should_pass: bool) -> None:
+    """ mock_chain_and_state_reader """
+    mock_read_canonical_block_number = mocker.patch.object(chain.Blockchain, 'read_canonical_block_number')
+    mock_read_canonical_block_number.return_value = int(block_number_or_hash) if isinstance(block_number_or_hash, int) else 0
     mock_read_account_data = mocker.patch.object(reader.StateReader, 'read_account_data')
     mock_read_account_storage = mocker.patch.object(reader.StateReader, 'read_account_storage')
     if should_pass:
@@ -201,13 +201,16 @@ class TestEthereumAPI:
         api = eth.EthereumAPI()
         assert api.get_block_transaction_count_by_hash(block_hash_bytes) == transaction_count
 
-    @pytest.mark.usefixtures('mock_state_reader')
+    @pytest.mark.usefixtures('mock_chain_and_state_reader')
     @pytest.mark.parametrize("address,index,block_number_or_hash,expected_value,incarnation,value,should_pass", [
         # Valid test list
-        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', '0x00', '2000001', '0x00000000000000000000000000000000000000000000003635c9adc5dea00000', 1, b'65\xc9\xad\xc5\xde\xa0\x00\x00', True),
+        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', '0x00', 2000001, '0x00000000000000000000000000000000000000000000003635c9adc5dea00000', 1, b'65\xc9\xad\xc5\xde\xa0\x00\x00', True),
+        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', '0x00', '0x95d325c65cd5f92376ca9215389b2a74ba9b6802a493798018d0c851d6828ae2',\
+            '0x00000000000000000000000000000000000000000000003635c9adc5dea00000', 1, b'65\xc9\xad\xc5\xde\xa0\x00\x00', True),
 
         # Invalid test list
-        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d64', '0x00', '2000001', '0x', 1, b'', False),
+        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d64', '0x00', 2000001, '0x', 1, b'', False),
+        ('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d64', '0x00', '0x95d325c65cd5f92376ca9215389b2a74ba9b6802a493798018d0c851d6828ae2', '0x', 1, b'', False),
     ])
     def test_get_storage_at(self, address: str, index: str, block_number_or_hash: str, expected_value: str, incarnation: int, value: bytes, should_pass: bool):
         """ Unit test for get_storage_at. """

@@ -34,7 +34,7 @@ def eth_getBlockTransactionCountByHash(block_hash: str) -> int:
     with contextlib.closing(EthereumAPI()) as api:
         return api.get_block_transaction_count_by_hash(block_hash)
 
-def eth_getStorageAt(address: str, index: str, block_number_or_hash: str) -> str:
+def eth_getStorageAt(address: str, index: str, block_number_or_hash: Union[int, str]) -> str:
     """ See EthereumAPI#get_storage_at. """
     with contextlib.closing(EthereumAPI()) as api:
         return api.get_storage_at(address, index, block_number_or_hash)

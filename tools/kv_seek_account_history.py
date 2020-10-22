@@ -9,7 +9,6 @@ import context # pylint: disable=unused-import
 from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_metadata
 from silksnake.remote import kv_utils
-from silksnake.remote.kv_metadata import INVALID_BLOCK_NUMBER
 from silksnake.remote.kv_remote import DEFAULT_TARGET
 
 def kv_seek_account_history(account_address: str, block_number: int, target: str = DEFAULT_TARGET):
@@ -34,7 +33,7 @@ def kv_seek_account_history(account_address: str, block_number: int, target: str
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('account_address', help='the account address as hex string (w or w/o 0x prefix)')
-    parser.add_argument('-b', '--block_number', default=INVALID_BLOCK_NUMBER, help='the block number as integer')
+    parser.add_argument('block_number', help='the block number as integer')
     parser.add_argument('-t', '--target', default=DEFAULT_TARGET, help='the server location as string <address>:<port>')
     args = parser.parse_args()
 

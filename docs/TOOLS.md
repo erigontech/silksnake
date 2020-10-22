@@ -206,33 +206,24 @@ RSP2 storage value: 7753cfad258efbc52a9a1452e42ffbce9be486cb
 
 ```shell-session
 $ ./tools/kv_seek_account_history.py -h
-usage: kv_seek_account_history.py [-h] [-b BLOCK_NUMBER] [-t TARGET] account_address
+usage: kv_seek_account_history.py [-h] [-t TARGET] account_address block_number
 
 The kv_seek_account_history command allows to query the turbo-geth/silkworm KV 'History of Accounts' bucket.
 
 positional arguments:
   account_address                                 the account address as hex string (w or w/o 0x prefix)
+  block_number                                    the block number as integer
 
 optional arguments:
   -h, --help                                      show this help message and exit
-  -b BLOCK_NUMBER, --block_number BLOCK_NUMBER    the block number as integer
   -t TARGET, --target TARGET                      the server location as string <address>:<port>
 ```
 
 ```shell-session
-$ ./tools/kv_seek_account_history.py fffdbdc275633f1cbe08af0f5d132e72f0d853a0
-REQ account_address: fffdbdc275633f1cbe08af0f5d132e72f0d853a0 (fffdbdc275633f1cbe08af0f5d132e72f0d853a0)
-RSP history: [
-key: fffdbdc275633f1cbe08af0f5d132e72f0d853a0ffffffffffffffff value: 000000000031ba8c800000
-]
-```
-
-```shell-session
-$ ./tools/kv_seek_account_history.py fe09353b5740a2255ba62879512a94e8bf53f7f4
-REQ account_address: fe09353b5740a2255ba62879512a94e8bf53f7f4 (key: fe09353b5740a2255ba62879512a94e8bf53f7f4)
+$ ./tools/kv_seek_account_history.py fe09353b5740a2255ba62879512a94e8bf53f7f4 1147013
+REQ account_address: fe09353b5740a2255ba62879512a94e8bf53f7f4 (key: fe09353b5740a2255ba62879512a94e8bf53f7f40000000000118085)
 RSP history: [
 key: fe09353b5740a2255ba62879512a94e8bf53f7f40000000000118085 value: 000000000010e809...987800987a00987c
-key: fe09353b5740a2255ba62879512a94e8bf53f7f4000000000019d453 value: 0000000000118087...53c80853cb0853cc
 ...
 ]
 ```

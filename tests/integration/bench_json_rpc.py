@@ -16,8 +16,9 @@ import context # pylint: disable=unused-import
 from silksnake.api import eth
 from silksnake.helpers import hashing
 from silksnake.remote.kv_remote import DEFAULT_TARGET
+from silksnake.types import LATEST_BLOCK_NUMBER
 
-# pylint: disable=unused-argument,too-many-return-statements,too-many-locals,too-many-nested-blocks
+# pylint: disable=unused-argument,too-many-return-statements,too-many-locals,too-many-nested-blocks,line-too-long
 
 def terminate_process(signal_number: int, frame):
     """ terminate_process """
@@ -92,15 +93,21 @@ def print_storage_ranges(json_state_map: Dict[str, Dict[str, str]], silksnake_st
     for key, entry in silksnake_state_map.items():
         print(f'{key}: {entry}')
 
-def bench_json_rpc(from_block_number: int, target: str = DEFAULT_TARGET, cmp_node_url: str = None):
+def bench_json_rpc(block_number_from: int, block_number_to: int, target: str = DEFAULT_TARGET, cmp_node_url: str = None):
     """ bench_json_rpc """
-    eth_api = eth.EthereumAPI(target)
-    latest_block_number = eth_api.block_number()
+    assert block_number_from <= block_number_to, f'{block_number_from} greater than {block_number_to}'
 
-    logging.info('Working set is from_block_number: %d to latest_block_number: %d', from_block_number, latest_block_number)
+    eth_api = eth.EthereumAPI(target)
+
+    if block_number_from == LATEST_BLOCK_NUMBER:
+        block_number_from = eth_api.block_number()
+    if block_number_to == LATEST_BLOCK_NUMBER:
+        block_number_to = eth_api.block_number()
+
+    logging.info('Working set is block_number_from: %d to block_number_to: %d', block_number_from, block_number_to)
 
     # Just an example to be moved in for loop
-    storage_at = eth_api.get_storage_at('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', '0x00', '2000001')
+    storage_at = eth_api.get_storage_at('0x33ee33fc3e1aacdb75a1ad362489ac54f02d6d63', '0x00', 2000001)
     logging.info('TG API: storage at location 0x00 for 0x33ee...6d63 in block 2000001: %s', storage_at)
 
     if cmp_node_url is not None:
@@ -110,14 +117,14 @@ def bench_json_rpc(from_block_number: int, target: str = DEFAULT_TARGET, cmp_nod
 
     storage_count = 0
     req_id = 0
-    for _, block_number in enumerate(range(from_block_number, latest_block_number)):
+    for _, block_number in enumerate(range(block_number_from, block_number_to+1)):
         block = eth_api.get_block_by_number(block_number)
         logging.info('Processing block_number: #%d with #transaction: %d', block_number, len(block.body.transactions))
         for index, transaction in enumerate(block.body.transactions):
             if transaction.to.hex() and transaction.gas_limit > 21000:
-                storage_count += 1
+                logging.info('Processing non-trivial transaction: #%d to: 0x%s', index, transaction.to.hex())
                 if storage_count % 10 == 0:
-                    logging.info('Processing non-trivial transaction: #%d to: %s', index, transaction.to.hex())
+                    storage_count += 1
                     next_key = '0x' + (32 * b'\x00').hex()
                     json_state_map = {}
                     silksnake_state_map = {}
@@ -137,8 +144,6 @@ def bench_json_rpc(from_block_number: int, target: str = DEFAULT_TARGET, cmp_nod
                         print_storage_ranges(json_state_map, silksnake_state_map)
                         return
 
-    print()
-
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)-15s %(message)s', level=logging.INFO)
 
@@ -148,11 +153,12 @@ if __name__ == '__main__':
     logging.info('%s: START - PID is %d', __file__, os.getpid())
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('from_block_number', help='the start block number as integer')
+    parser.add_argument('-s', '--block_number_from', default=LATEST_BLOCK_NUMBER, help='the start block number as integer (less than or equal to end)')
+    parser.add_argument('-e', '--block_number_to', default=LATEST_BLOCK_NUMBER, help='the end block number as integer (greater than or equal to start)')
     parser.add_argument('-t', '--target', default='localhost:9090', help='the Turbo node location as string <address>:<port>')
     parser.add_argument('-u', '--url', help='the Ethereum node location to compare as URL string or null if no compare')
     args = parser.parse_args()
 
-    bench_json_rpc(int(args.from_block_number), args.target, args.url)
+    bench_json_rpc(int(args.block_number_from), int(args.block_number_to), args.target, args.url)
 
     logging.info('%s: END', __file__)

@@ -6,7 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.rlp import receipt
+from silksnake.db.cbor import receipt
 from silksnake.rlp import sedes
 from silksnake.helpers.dbutils import tables
 from silksnake.remote import kv_remote
@@ -28,7 +28,7 @@ def kv_seek_block_receipt(kv_view: kv_remote.RemoteView, block_height: int, coun
         print('RECEIPT\nREQ2 block_number:', block_number, '(key: ' + str(encoded_block_key.hex()) + ')')
         key, value = kv_view.get(tables.BLOCK_RECEIPTS_LABEL, encoded_block_key)
         decoded_block_number, decoded_block_hash = sedes.decode_block_key(key)
-        block_receipt_list = receipt.decode_block_receipt(value)
+        block_receipt_list = receipt.TransactionReceipt.from_bytes(value)
         assert decoded_block_number == block_number, 'ERR block number {} does not match!'.format(decoded_block_number)
         assert decoded_block_hash == block_hash, 'ERR block hash {} does not match!'.format(decoded_block_hash)
         print('RSP2 block_receipts(' + str(len(block_receipt_list)) + '): [')

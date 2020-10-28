@@ -33,6 +33,9 @@ jobs:
       - run:
           name: Build extensions
           command: python setup.py build
+      - run:
+          name: Install
+          command: pip install .
       - save_cache:
           name: "Save Hunter cache"
           key: *hunter-cache-key

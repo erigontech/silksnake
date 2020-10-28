@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Run CMake
           working_directory: ~/build/silkworm
-          command: cmake ./silkworm -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          command: cmake ../../project/silkworm -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       - run:
           name: Upgrade pip
           command: pip install --upgrade pip

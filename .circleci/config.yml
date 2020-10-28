@@ -17,6 +17,10 @@ jobs:
           name: "Restore Hunter cache"
           key: &hunter-cache-key hunter-{{ .Environment.CIRCLE_JOB }}-{{checksum "silkworm/cmake/Hunter/config.cmake"}}-{{checksum "silkworm/cmake/Hunter/packages.cmake"}}
       - run:
+          name: "Run CMake"
+          working_directory: ~/build/silkworm
+          command: cmake ./silkworm -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      - run:
           name: Upgrade pip
           command: pip install --upgrade pip
       - python/install-packages:

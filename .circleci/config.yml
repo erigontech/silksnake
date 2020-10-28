@@ -13,6 +13,9 @@ jobs:
           command: |
             git submodule sync
             git submodule update --init --recursive
+      - restore_cache:
+          name: "Restore Hunter cache"
+          key: &hunter-cache-key hunter-{{ .Environment.CIRCLE_JOB }}-{{checksum "silkworm/cmake/Hunter/config.cmake"}}-{{checksum "silkworm/cmake/Hunter/packages.cmake"}}
       - run:
           name: Upgrade pip
           command: pip install --upgrade pip
@@ -21,6 +24,11 @@ jobs:
       - run:
           name: Build extensions
           command: python setup.py build
+      - save_cache:
+          name: "Save Hunter cache"
+          key: *hunter-cache-key
+          paths:
+            - ~/.hunter
       - run:
           name: Run linter
           command: pylint silksnake tests tools

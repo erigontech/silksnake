@@ -2,6 +2,7 @@ cbor2
 coverage
 eth-hash[pycryptodome]
 grpcio
+protobuf
 pybind11
 pylint
 pytest

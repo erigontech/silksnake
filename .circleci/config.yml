@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Update submodules"
+          name: Update submodules
           command: |
             git submodule sync
             git submodule update --init --recursive
@@ -23,16 +23,20 @@ jobs:
           key: &hunter-cache-key hunter-{{ .Environment.CIRCLE_JOB }}-{{checksum "silkworm/cmake/Hunter/config.cmake"}}-{{checksum "silkworm/cmake/Hunter/packages.cmake"}}
       - run:
           name: Run CMake
-          working_directory: ~/build/silkworm
-          command: cmake ../../project/silkworm -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+          working_directory: ../project/silkworm/build
+          command: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      - run:
+          name: Make Silkworm
+          working_directory: ../project/silkworm/build
+          command: make -j
       - run:
           name: Upgrade pip
           command: pip install --upgrade pip
       - python/install-packages:
           pkg-manager: pip
       - run:
-          name: Install
-          command: pip install .
+          name: Build extensions
+          command: python setup.py build_ext --inplace
       - save_cache:
           name: "Save Hunter cache"
           key: *hunter-cache-key

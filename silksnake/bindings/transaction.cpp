@@ -6,6 +6,7 @@
 #include <silkworm/types/transaction.hpp>
 
 #include "transaction.hpp"
+#include "types.hpp"
 #include "uint256_type_caster.hpp"
 
 namespace py = pybind11;
@@ -15,7 +16,7 @@ using namespace silkworm;
 std::ostream& operator<<(std::ostream& out, const Transaction& t) {
     out << "<silkworm::Transaction from="
         << " nonce=" << std::to_string(t.nonce)
-        << " gas_price=(hi:" << t.gas_price.hi.hi << t.gas_price.hi.lo << " lo:" << t.gas_price.lo.hi << t.gas_price.lo.lo << ")"
+        << " gas_price=" << t.gas_price
         << " gas_limit=" << std::to_string(t.gas_limit)
         << " to="
         << " >";
@@ -24,18 +25,6 @@ std::ostream& operator<<(std::ostream& out, const Transaction& t) {
 
 void bind_transaction(py::module_ &m) {
     py::class_<Transaction>(m, "Transaction")
-        /*.def(py::init<
-            uint64_t,                      // nonce
-            intx::uint256,                 // gas_price
-            uint64_t,                      // gas_limit
-            std::optional<evmc::address>,  // to
-            intx::uint256,                 // value
-            Bytes,                         // data
-            intx::uint256,                 // v
-            intx::uint256,                 // r
-            intx::uint256,                 // s
-            std::optional<evmc::address>   // from
-            >())*/
         .def(py::init([](
             uint64_t nonce,
             intx::uint256 gas_price,

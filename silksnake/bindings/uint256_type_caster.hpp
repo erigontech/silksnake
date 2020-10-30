@@ -8,7 +8,7 @@
 
 namespace pybind11 { namespace detail {
     template <> struct type_caster<intx::uint256> {
-        static constexpr int bytes32 = sizeof(intx::uint256);
+        static constexpr int SIZE32 = sizeof(intx::uint256);
     public:
         /**
          * This macro establishes the name 'uint256' in function signatures and declares a local variable
@@ -30,11 +30,10 @@ namespace pybind11 { namespace detail {
             }
             /* Now try to convert into a C++ intx::uint256 using a big-endian intermediate buffer */
             PyLongObject *pylong_tmp = (PyLongObject *)tmp;
-            //constexpr auto bytes32 = sizeof(intx::uint256);
-            uint8_t buffer[bytes32];
+            uint8_t buffer[SIZE32];
             int little_endian = 0;
             int is_signed = 0;
-            int rv = _PyLong_AsByteArray(pylong_tmp, (unsigned char *)buffer, bytes32, little_endian, is_signed);
+            int rv = _PyLong_AsByteArray(pylong_tmp, (unsigned char *)buffer, SIZE32, little_endian, is_signed);
             if (rv == -1) {
                 return false;
             }
@@ -50,12 +49,11 @@ namespace pybind11 { namespace detail {
          * by implicit casters.
          */
         static handle cast(intx::uint256 src, return_value_policy /* policy */, handle /* parent */) {
-            //constexpr auto bytes32 = sizeof(intx::uint256);
-            uint8_t buffer[bytes32];
+            uint8_t buffer[SIZE32];
             intx::be::store(buffer, src);
             int little_endian = 0;
             int is_signed = 0;
-            return _PyLong_FromByteArray(buffer, bytes32, little_endian, is_signed);
+            return _PyLong_FromByteArray(buffer, SIZE32, little_endian, is_signed);
         }
     };
 }} // namespace pybind11::detail

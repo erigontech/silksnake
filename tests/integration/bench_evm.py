@@ -7,7 +7,7 @@ import os
 import signal
 import sys
 
-# pylint: disable=unused-argument,invalid-name
+# pylint: disable=unused-argument,invalid-name,line-too-long
 
 import context # pylint: disable=unused-import
 import silkworm
@@ -39,7 +39,8 @@ if __name__ == '__main__':
     print(transactions_root)
     receipts_root = silkworm.EvmBytes32(bytes.fromhex('8a9a2b3a9ce4ef8523b6318bb7e84d8c348b0ceab391a7e98211c6b191f32443'))
     print(receipts_root)
-    logs_bloom = [0 for i in range(256)]
+    logs_bloom = bytes.fromhex('543dde2c0188cbfac4fff526dcb6137b92d992bf72cc6bc2f205ae36049253c0a9d8d6652e601ffd2722b8c7271bb77f90501dafe2b8b32a23287c1cf6640d97')
+    print(logs_bloom.hex())
     difficulty = 115792089237316195423570985008687907853269984665640564039457584007913129639935
     difficulty = 340282367920938463463374607431768211456
     number = int(os.getpid())
@@ -47,7 +48,8 @@ if __name__ == '__main__':
     gas_used = 2100000
     timestamp = 0
     mix_hash = silkworm.EvmBytes32(bytes.fromhex('0000000000000000000000000000000000000000000771c4fa448f21a1478809'))
-    nonce = [0 for i in range(8)]
+    nonce = (12345678).to_bytes(8, 'big')
+    print(nonce.hex())
     header = silkworm.BlockHeader(
         parent_hash,
         ommers_hash,

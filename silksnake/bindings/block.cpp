@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <sstream>
 
 #include <pybind11/pybind11.h>
@@ -11,27 +12,6 @@
 namespace py = pybind11;
 
 using namespace silkworm;
-
-template<typename T, std::size_t N>
-std::ostream& operator<<(std::ostream& out, const std::array<T, N>& a) {
-    std::cout << "a.size=" << a.size();
-    if (!a.empty()) {
-        out << "[";
-        std::for_each(a.begin(), a.end(), [&out](const T& t) { out << t; });
-        out << "]";
-    }
-    return out;
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
-    if (!v.empty()) {
-        out << "[";
-        std::for_each(v.begin(), v.end(), [&out](const T& t) { out << t; });
-        out << "]";
-    }
-    return out;
-}
 
 std::ostream& operator<<(std::ostream& out, const BlockHeader& h) {
     out << "parent_hash=" << h.parent_hash;
@@ -61,14 +41,18 @@ void bind_block(py::module_ &m) {
             evmc::bytes32 state_root,
             evmc::bytes32 transactions_root,
             evmc::bytes32 receipts_root,
-            Bloom logs_bloom,
+            const std::string& logs_bloom_bytes,
             intx::uint256 difficulty,
             uint64_t number,
             uint64_t gas_limit,
             uint64_t gas_used,
             uint64_t timestamp,
             evmc::bytes32 mix_hash,
-            std::array<uint8_t, 8> nonce) {
+            const std::string& nonce_bytes) {
+                Bloom logs_bloom{};
+                std::copy(logs_bloom_bytes.begin(), logs_bloom_bytes.end(), logs_bloom.begin());
+                std::array<uint8_t, 8> nonce{};
+                std::copy(nonce_bytes.begin(), nonce_bytes.end(), nonce.begin());
                 auto header = BlockHeader{};
                 header.parent_hash = parent_hash;
                 header.ommers_hash = ommers_hash;

@@ -1,16 +1,26 @@
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
 #include <optional>
 #include <sstream>
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <silkworm/types/transaction.hpp>
 
+#include "transaction.hpp"
 #include "uint256_type_caster.hpp"
 
 namespace py = pybind11;
 
 using namespace silkworm;
+
+std::ostream& operator<<(std::ostream& out, const Transaction& t) {
+    out << "<silkworm::Transaction from="
+        << " nonce=" << std::to_string(t.nonce)
+        << " gas_price=(hi:" << t.gas_price.hi.hi << t.gas_price.hi.lo << " lo:" << t.gas_price.lo.hi << t.gas_price.lo.lo << ")"
+        << " gas_limit=" << std::to_string(t.gas_limit)
+        << " to="
+        << " >";
+    return out;
+}
 
 void bind_transaction(py::module_ &m) {
     py::class_<Transaction>(m, "Transaction")
@@ -32,7 +42,7 @@ void bind_transaction(py::module_ &m) {
             uint64_t gas_limit,
             std::optional<evmc::address> to,
             intx::uint256 value,
-            std::string data_bytes, // use Pybind11 builtin type conversion from bytes to std::string
+            const std::string& data_bytes, // use Pybind11 builtin type conversion from bytes to std::string
             intx::uint256 v,
             intx::uint256 r,
             intx::uint256 s,
@@ -52,12 +62,7 @@ void bind_transaction(py::module_ &m) {
         .def_readwrite("from", &Transaction::from)
         .def("__repr__", [](const Transaction& t) {
             std::ostringstream oss;
-            oss << "<silkworm::Transaction from="
-                << " nonce=" << std::to_string(t.nonce)
-                << " gas_price=(hi:" << t.gas_price.hi.hi << t.gas_price.hi.lo << " lo:" << t.gas_price.lo.hi << t.gas_price.lo.lo << ")"
-                << " gas_limit=" << std::to_string(t.gas_limit)
-                << " to="
-                << " >";
+            oss << t;
             return oss.str();
         });
 }

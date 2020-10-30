@@ -33,6 +33,9 @@ sources = [
 ]
 sources.extend(glob('silksnake/bindings/*.cpp'))
 
+library_dirs=['silkworm/build/', 'silkworm/build/cbor-cpp/','silkworm/build/libff/libff',  'silkworm/build/silkworm/']
+library_dirs.extend(glob(path.expanduser('~') + '/.hunter/**/Install/lib', recursive=True))
+
 setup(
     name='silksnake',
     version=__version__,
@@ -48,6 +51,8 @@ setup(
             'silkworm',
             sources=sorted(sources), # Sorted source files for build reproducibility
             include_dirs=include_dirs,
+            library_dirs=library_dirs,
+            libraries=['cborcpp', 'cryptopp', 'evmone', 'ff', 'secp256k1', 'silkworm'],
             define_macros=[
                 ('VERSION_INFO', __version__)
             ],

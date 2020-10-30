@@ -1,3 +1,6 @@
+#ifndef SILKSNAKE_BINDINGS_UINT256_TYPE_CASTER_H_
+#define SILKSNAKE_BINDINGS_UINT256_TYPE_CASTER_H_
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -56,3 +59,5 @@ namespace pybind11 { namespace detail {
         }
     };
 }} // namespace pybind11::detail
+
+#endif // SILKSNAKE_BINDINGS_UINT256_TYPE_CASTER_H_

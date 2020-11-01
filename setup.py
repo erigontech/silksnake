@@ -27,14 +27,78 @@ with open('LICENSE') as f:
 include_dirs = ['silkworm', 'silkworm/evmone/evmc/include']
 include_dirs.extend(glob(path.expanduser('~') + '/.hunter/**/Install/include', recursive=True))
 
-sources = [
-    #'silkworm/silkworm/execution/processor.cpp',
-    #'silkworm/silkworm/state/intra_block_state.cpp',
-]
-sources.extend(glob('silksnake/bindings/*.cpp'))
-
 library_dirs=['silkworm/build/', 'silkworm/build/cbor-cpp/','silkworm/build/libff/libff',  'silkworm/build/silkworm/']
 library_dirs.extend(glob(path.expanduser('~') + '/.hunter/**/Install/lib', recursive=True))
+
+libraries=[ # order matters!
+    'absl_bad_any_cast_impl',
+    'absl_bad_optional_access',
+    'absl_bad_variant_access',
+    'absl_city',
+    'absl_civil_time',
+    'absl_cord',
+    'absl_examine_stack',
+    'absl_failure_signal_handler',
+    'absl_flags',
+    'absl_flags_config',
+    'absl_flags_internal',
+    'absl_flags_marshalling',
+    'absl_flags_parse',
+    'absl_flags_program_name',
+    'absl_flags_registry',
+    'absl_flags_usage',
+    'absl_flags_usage_internal',
+    'absl_graphcycles_internal',
+    'absl_hash',
+    'absl_hashtablez_sampler',
+    'absl_leak_check',
+    'absl_leak_check_disable',
+    'absl_log_severity',
+    'absl_periodic_sampler',
+    'absl_random_distributions',
+    'absl_random_internal_distribution_test_util',
+    'absl_random_internal_pool_urbg',
+    'absl_random_internal_randen',
+    'absl_random_internal_randen_hwaes',
+    'absl_random_internal_randen_hwaes_impl',
+    'absl_random_internal_randen_slow',
+    'absl_random_internal_seed_material',
+    'absl_random_seed_gen_exception',
+    'absl_random_seed_sequences',
+    'absl_raw_hash_set',
+    'absl_raw_logging_internal',
+    'absl_scoped_set_env',
+    'absl_stacktrace',
+    'absl_status',
+    #'absl_str_format_internal',
+    #'absl_strings',
+    #'absl_strings_internal',
+    'absl_synchronization',
+    #'absl_throw_delegate',
+    'absl_time',
+    'absl_time_zone',
+    'absl_exponential_biased',
+    'absl_base',
+    'absl_spinlock_wait',
+    'absl_symbolize',
+    'absl_demangle_internal',
+    'absl_debugging_internal',
+    'absl_dynamic_annotations',
+    'absl_malloc_internal',
+    'absl_int128',
+    #'benchmark',
+    #'benchmark_main',
+    'boost_filesystem-mt-x64',
+    'cborcpp',
+    'cryptopp',
+    'ethash',
+    'evmone',
+    'ff',
+    'keccak',
+    'lmdb',
+    'secp256k1',
+    'silkworm'
+]
 
 setup(
     name='silksnake',
@@ -49,10 +113,10 @@ setup(
     ext_modules=[
         Pybind11Extension(
             'silkworm',
-            sources=sorted(sources), # Sorted source files for build reproducibility
+            sources=sorted(glob('silksnake/bindings/*.cpp')), # Sorted source files for build reproducibility
             include_dirs=include_dirs,
             library_dirs=library_dirs,
-            libraries=['cborcpp', 'cryptopp', 'evmone', 'ff', 'secp256k1', 'silkworm'],
+            libraries=libraries,
             define_macros=[
                 ('VERSION_INFO', __version__)
             ],

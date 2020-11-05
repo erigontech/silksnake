@@ -14,12 +14,11 @@ namespace py = pybind11;
 using namespace silkworm;
 
 std::ostream& operator<<(std::ostream& out, const Transaction& t) {
-    out << "<silkworm::Transaction from="
+    out << "from="
         << " nonce=" << std::to_string(t.nonce)
         << " gas_price=" << t.gas_price
         << " gas_limit=" << std::to_string(t.gas_limit)
-        << " to="
-        << " >";
+        << " to=";
     return out;
 }
 
@@ -51,7 +50,7 @@ void bind_transaction(py::module_ &m) {
         .def_readwrite("from", &Transaction::from)
         .def("__repr__", [](const Transaction& t) {
             std::ostringstream oss;
-            oss << t;
+            oss << "<silkworm::Transaction " << t << ">";
             return oss.str();
         });
 }

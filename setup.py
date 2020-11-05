@@ -31,10 +31,20 @@ library_dirs=['silkworm/build/', 'silkworm/build/cbor-cpp/','silkworm/build/libf
 library_dirs.extend(glob(path.expanduser('~') + '/.hunter/**/Install/lib', recursive=True))
 
 libraries=[ # order matters!
+    'silkworm',
+    'boost_filesystem-mt-x64',
+    'cborcpp',
+    'ethash',
+    'evmone',
+    'ff',
+    'keccak',
+    'lmdb',
+    'secp256k1',
+    'cryptopp',
+    'gmp',
     #'absl_bad_any_cast_impl',
     #'absl_bad_optional_access',
     #'absl_bad_variant_access',
-    #'absl_city',
     #'absl_civil_time',
     #'absl_cord',
     #'absl_examine_stack',
@@ -51,6 +61,7 @@ libraries=[ # order matters!
     #'absl_graphcycles_internal',
     'absl_hash',
     'absl_hashtablez_sampler',
+    'absl_city',
     #'absl_leak_check',
     #'absl_leak_check_disable',
     #'absl_log_severity',
@@ -88,16 +99,6 @@ libraries=[ # order matters!
     'absl_int128',
     #'benchmark',
     #'benchmark_main',
-    'boost_filesystem-mt-x64',
-    'cborcpp',
-    'cryptopp',
-    'ethash',
-    'evmone',
-    'ff',
-    'keccak',
-    'lmdb',
-    'secp256k1',
-    'silkworm'
 ]
 
 setup(

@@ -1,22 +1,31 @@
 #include <sstream>
 
-#include <pybind11/pybind11.h>
+//#include "block.hpp"
+#include "chain_config.hpp"
+#include "processor.hpp"
+
+#include <silkworm/types/block.hpp>
 #include <silkworm/chain/config.hpp>
-#include <silkworm/execution/processor.hpp>
 
 namespace py = pybind11;
 
 using namespace silkworm;
 
-void bind_execution_processor(py::module_ &m) {
-    py::class_<ExecutionProcessor>(m, "ExecutionProcessor")
-        //.def(py::init<const Block&, IntraBlockState&, const ChainConfig&>(),
-            //py::arg("block"), py::arg("state"), py::arg("config")=kMainnetConfig)
+std::ostream& operator<<(std::ostream& out, const ExecutionProcessor& p) {
+    out << &p;
+    return out;
+}
+
+void bind_execution_processor(pybind11::module_ &m) {
+    pybind11::class_<ExecutionProcessor>(m, "ExecutionProcessor")
+        .def(py::init([](const Block& block, IntraBlockState& state, const ChainConfig& config) {
+            return std::make_unique<ExecutionProcessor>(block, state, config);
+        }))
         .def("cumulative_gas_used", &ExecutionProcessor::cumulative_gas_used)
+        .def("execute_transaction", &ExecutionProcessor::execute_transaction)
         .def("__repr__", [](const ExecutionProcessor& p) {
             std::ostringstream oss;
-            oss << "<silkworm::ExecutionProcessor"
-                << " >";
+            oss << "<silkworm::ExecutionProcessor " << p << ">";
             return oss.str();
         });
 }

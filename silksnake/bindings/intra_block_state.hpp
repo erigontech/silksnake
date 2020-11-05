@@ -3,10 +3,11 @@
 
 #include <ostream>
 
+#include <pybind11/pybind11.h>
 #include <silkworm/state/intra_block_state.hpp>
 
-using namespace silkworm;
+std::ostream& operator<<(std::ostream& out, const silkworm::IntraBlockState& s);
 
-std::ostream& operator<<(std::ostream& out, const IntraBlockState& s);
+void bind_intra_block_state(pybind11::module_& module);
 
 #endif  // SILKSNAKE_BINDINGS_INTRA_BLOCK_STATE_H_

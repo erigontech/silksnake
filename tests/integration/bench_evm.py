@@ -10,6 +10,7 @@ import sys
 # pylint: disable=unused-argument,invalid-name,line-too-long
 
 import context # pylint: disable=unused-import
+import silksnake
 import silkworm
 
 def terminate_process(signal_number: int, frame):
@@ -27,12 +28,8 @@ if __name__ == '__main__':
     logging.info('%s: START - PID is %d', __file__, os.getpid())
 
     parent_hash = silkworm.EvmBytes32(bytes.fromhex('27d6b0139674635cf51d82c9bfbc6536954ff8f03650c1ee97b56dbc1fd16807'))
-    print(parent_hash)
     ommers_hash = silkworm.EvmBytes32(bytes.fromhex('1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347'))
-    print(ommers_hash)
     beneficiary = silkworm.EvmAddress(b'\x00\x01')
-    #beneficiary.bytes = b'\x00\x01'
-    print(beneficiary)
     state_root = silkworm.EvmBytes32(bytes.fromhex('474b3fb6f3e5675d1a0a9f915d13930bb3943b61cbd5c1b96115a36cf5e0f204'))
     print(state_root)
     transactions_root = silkworm.EvmBytes32(bytes.fromhex('864aa5398f5cdb95b349b004c1a60c22062d11aed4bb4c841bfebd947f184eba'))
@@ -74,5 +71,17 @@ if __name__ == '__main__':
 
     txn = silkworm.Transaction(0, 10000, 21000, None, 0, '', 1, 1, 1, None)
     print(txn)
+
+    remote_kv = silksnake.RemoteClient().open()
+    state_reader = silksnake.StateReader(remote_kv, 2000001)
+    buffer = silkworm.RemoteBuffer(state_reader)
+    print(buffer)
+    intra_block_state = silkworm.IntraBlockState(buffer)
+    print(intra_block_state)
+    chain_config = silkworm.ChainConfig(5) # Goerli chain_id
+    print(chain_config)
+    processor = silkworm.ExecutionProcessor(block, intra_block_state, chain_config)
+    print(processor)
+    processor.execute_transaction(txn)
 
     logging.info('%s: END', __file__)

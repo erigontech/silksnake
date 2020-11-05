@@ -3,10 +3,11 @@
 
 #include <ostream>
 
+#include <pybind11/pybind11.h>
 #include <silkworm/types/transaction.hpp>
 
-using namespace silkworm;
+std::ostream& operator<<(std::ostream& out, const silkworm::Transaction& t);
 
-std::ostream& operator<<(std::ostream& out, const Transaction& t);
+void bind_transaction(pybind11::module_& module);
 
 #endif  // SILKSNAKE_BINDINGS_TRANSACTION_H_

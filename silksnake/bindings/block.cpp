@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 #include <silkworm/types/block.hpp>
 
+#include "block.hpp"
 #include "transaction.hpp"
 #include "types.hpp"
 #include "uint256_type_caster.hpp"
@@ -13,21 +14,21 @@ namespace py = pybind11;
 
 using namespace silkworm;
 
-std::ostream& operator<<(std::ostream& out, const BlockHeader& h) {
-    out << "parent_hash=" << h.parent_hash;
-    out << " ommers_hash=" << h.ommers_hash;
-    out << " beneficiary=" << h.beneficiary;
-    out << " state_root=" << h.state_root;
-    out << " transactions_root=" << h.transactions_root;
-    out << " receipts_root=" << h.receipts_root;
-    out << " logs_bloom=" << h.logs_bloom;
-    out << " difficulty=" << h.difficulty;
-    out << " number=" << h.number;
-    out << " gas_limit=" << h.gas_limit;
-    out << " gas_used=" << h.gas_used;
-    out << " timestamp=" << h.timestamp;
-    out << " mix_hash=" << h.mix_hash;
-    out << " nonce=" << h.nonce;
+std::ostream& operator<<(std::ostream& out, const BlockHeader& bh) {
+    out << "parent_hash=" << bh.parent_hash;
+    out << " ommers_hash=" << bh.ommers_hash;
+    out << " beneficiary=" << bh.beneficiary;
+    out << " state_root=" << bh.state_root;
+    out << " transactions_root=" << bh.transactions_root;
+    out << " receipts_root=" << bh.receipts_root;
+    out << " logs_bloom=" << bh.logs_bloom;
+    out << " difficulty=" << bh.difficulty;
+    out << " number=" << bh.number;
+    out << " gas_limit=" << bh.gas_limit;
+    out << " gas_used=" << bh.gas_used;
+    out << " timestamp=" << bh.timestamp;
+    out << " mix_hash=" << bh.mix_hash;
+    out << " nonce=" << bh.nonce;
     return out;
 }
 

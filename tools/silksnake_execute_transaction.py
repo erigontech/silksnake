@@ -48,7 +48,7 @@ def execute_transaction(transaction_hash: str):
     state_reader = silksnake.StateReader(eth_api.remote_kv, block_number)
     buffer = silkworm.RemoteBuffer(state_reader)
     intra_block_state = silkworm.IntraBlockState(buffer)
-    chain_config = silkworm.ChainConfig(5) # TODO read Goerli chain id from config
+    chain_config = silkworm.ChainConfig(5) # read Goerli chain id from config
     logging.info('chain_config: %s', chain_config)
     processor = silkworm.ExecutionProcessor(block, intra_block_state, chain_config)
     logging.info('processor: %s', processor)

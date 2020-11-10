@@ -12,6 +12,8 @@ from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
 from silksnake.remote.kv_remote import DEFAULT_TARGET
 
+# pylint: disable=too-many-locals
+
 def kv_seek_plain_change_sets(kv_view: kv_remote.RemoteView, block_height: int, count: int = 1):
     """ Search for the provided block range in KV 'Account Changes' and 'Storage Changes' tables.
     """

@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include <evmone/evmc/include/evmc/evmc.hpp>
+#include <intx/intx.hpp>
 
 template<typename T, std::size_t N>
 std::ostream& operator<<(std::ostream& out, const std::array<T, N>& a) {

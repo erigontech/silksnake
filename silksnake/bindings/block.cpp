@@ -35,6 +35,11 @@ std::ostream& operator<<(std::ostream& out, const BlockHeader& bh) {
 void bind_block(py::module_ &m) {
     py::class_<BlockHeader>(m, "BlockHeader")
         .def(py::init())
+        .def(py::init([](uint64_t number) {
+            auto header = BlockHeader{};
+            header.number = number;
+            return header;
+        }))
         .def(py::init([](
             evmc::bytes32 parent_hash,
             evmc::bytes32 ommers_hash,
@@ -90,6 +95,12 @@ void bind_block(py::module_ &m) {
         });
 
     py::class_<Block, BlockBody>(m, "Block")
+        .def(py::init([](uint64_t number, uint64_t gas_limit) {
+            auto header = BlockHeader{};
+            header.number = number;
+            header.gas_limit = gas_limit;
+            return Block{std::vector<Transaction>(), std::vector<BlockHeader>(), header};
+        }))
         .def(py::init<
             std::vector<Transaction>&,
             std::vector<BlockHeader>&,

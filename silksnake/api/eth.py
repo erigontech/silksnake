@@ -69,6 +69,15 @@ class EthereumAPI:
         except Exception:
             return '0x'
 
+    def get_transaction_by_hash(self, transaction_hash: str) -> sedes.Transaction:
+        """ Get the transaction having the given hash. """
+        try:
+            transaction_hash_bytes = hashing.hex_as_hash(transaction_hash)
+            transaction, _, _, _ = chain.Blockchain(self.remote_kv).read_transaction_by_hash(transaction_hash_bytes)
+            return transaction
+        except Exception:
+            return '0x'
+
     def syncing(self) -> Union[bool, Tuple[int ,int]]:
         """Returns false is already sync'd, otherwise the (currentBlock, highestBlock) couple."""
         try:
@@ -79,3 +88,11 @@ class EthereumAPI:
             return highest_block, current_block
         except Exception:
             return False
+
+    def get_transaction_info_by_hash(self, transaction_hash: str) -> Tuple[sedes.Transaction, int, str, int]:
+        """ Get information for the transaction with given hash. """
+        try:
+            transaction_hash_bytes = hashing.hex_as_hash(transaction_hash)
+            return chain.Blockchain(self.remote_kv).read_transaction_by_hash(transaction_hash_bytes)
+        except Exception:
+            return '0x'

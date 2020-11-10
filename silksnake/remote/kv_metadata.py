@@ -23,6 +23,6 @@ def decode_account_address_list(address_list_bytes: bytes):
     num_addresses = len(address_list_bytes) // ADDRESS_SIZE
     account_address_list = []
     for i in range(num_addresses):
-        account_address = address_list_bytes[i : i + ADDRESS_SIZE]
+        account_address = address_list_bytes[i * ADDRESS_SIZE : (i + 1) * ADDRESS_SIZE]
         account_address_list.append(account_address)
     return account_address_list

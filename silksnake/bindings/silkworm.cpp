@@ -11,6 +11,7 @@ void bind_block(py::module_& module);
 void bind_chain_config(py::module_& module);
 void bind_execution_processor(py::module_& module);
 void bind_intra_block_state(py::module_& module);
+void bind_receipt(py::module_& module);
 void bind_remote_buffer(py::module_& module);
 void bind_transaction(py::module_& module);
 void bind_types(py::module_& module);
@@ -22,6 +23,7 @@ PYBIND11_MODULE(silkworm, module) {
     bind_chain_config(module);
     bind_execution_processor(module);
     bind_intra_block_state(module);
+    bind_receipt(module);
     bind_remote_buffer(module);
     bind_transaction(module);
     bind_types(module);

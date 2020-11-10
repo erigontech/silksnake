@@ -16,8 +16,10 @@ def get_as_of(database: kvstore.KV, storage: bool, key: bytes, block_number: int
     """get_as_of"""
     view = database.view()
 
+    # First, search key in state history by block...
     value = find_by_history(view, storage, key, block_number)
     if value is None:
+        # ... if not found, search key in current state
         _, value = view.get(tables.PLAIN_STATE_LABEL, key)
     return value
 
@@ -35,7 +37,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
         if not k[:ADDRESS_SIZE] == key[:ADDRESS_SIZE] or not k[ADDRESS_SIZE:ADDRESS_SIZE+HASH_SIZE] == key[ADDRESS_SIZE+BLOCK_NUMBER_SIZE:]:
             return None
     else:
-        if not key.startswith(k):
+        if not k.startswith(key):
             return None
 
     change_set_block, is_set, found = history_index.HistoryIndex(value).search(block_number)
@@ -60,7 +62,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
             if not code_hash:
                 return None
             if len(code_hash) > 0:
-                acc.code_hash = hashing.bytes_to_hash(code_hash)
+                acc.code_hash = hashing.bytes_to_hash(code_hash).hex()
             data = bytearray(acc.length_for_storage())
             acc.to_storage(data)
             data = bytes(data)

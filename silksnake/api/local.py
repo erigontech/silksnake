@@ -39,6 +39,11 @@ def eth_getStorageAt(address: str, index: str, block_number_or_hash: Union[int, 
     with contextlib.closing(EthereumAPI()) as api:
         return api.get_storage_at(address, index, block_number_or_hash)
 
+def eth_getTransactionByHash(transaction_hash: str):
+    """ See EthereumAPI#get_transaction_by_hash """
+    with contextlib.closing(EthereumAPI()) as api:
+        return api.get_transaction_by_hash(transaction_hash)
+
 def eth_syncing() -> Union[bool, Tuple[int ,int]]:
     """ See EthereumAPI#eth_syncing. """
     with contextlib.closing(EthereumAPI()) as api:

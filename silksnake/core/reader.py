@@ -21,14 +21,14 @@ class StateReader:
     def read_account_data(self, address: str) -> account.Account:
         """ read_account_data """
         address_bytes = Address.from_hex(address).bytes
-        encoded_account_bytes = history.get_as_of(self.database, False, address_bytes, self.block_number+1)
+        encoded_account_bytes = history.get_as_of(self.database, False, address_bytes, self.block_number) # self.block_number+1 ?
         return account.Account.from_storage(encoded_account_bytes)
 
     def read_account_storage(self, address: str, incarnation: int, location_hash: bytes) -> bytes:
         """ read_account_storage """
         address_bytes = Address.from_hex(address).bytes
         storage_key = composite_keys.create_plain_composite_storage_key(address_bytes, incarnation, location_hash)
-        location_value = history.get_as_of(self.database, True, storage_key, self.block_number+1)
+        location_value = history.get_as_of(self.database, True, storage_key, self.block_number) # self.block_number+1 ?
         return location_value
 
     def read_eth_supply(self) -> int:

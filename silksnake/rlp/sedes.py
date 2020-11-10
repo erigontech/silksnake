@@ -51,6 +51,7 @@ class TransactionFieldsAPI(ABC):
     nonce: int
     gas_price: int
     gas_limit: int
+    sender: bytes
     to: bytes
     value: int
     data: bytes

@@ -14,16 +14,16 @@ namespace py = pybind11;
 using namespace silkworm;
 
 std::ostream& operator<<(std::ostream& out, const Transaction& t) {
-    out << "from="
+    out << "from=" << (t.from.has_value() ? t.from.value() : evmc::address{})
         << " nonce=" << std::to_string(t.nonce)
         << " gas_price=" << t.gas_price
         << " gas_limit=" << std::to_string(t.gas_limit)
-        << " to=";
+        << " to=" << (t.to.has_value() ? t.to.value() : evmc::address{});
     return out;
 }
 
-void bind_transaction(py::module_ &m) {
-    py::class_<Transaction>(m, "Transaction")
+void bind_transaction(py::module_& module) {
+    py::class_<Transaction>(module, "Transaction")
         .def(py::init([](
             uint64_t nonce,
             intx::uint256 gas_price,

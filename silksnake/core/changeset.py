@@ -57,10 +57,10 @@ class AccountChangeSet:
 
     def find(self, key: bytes) -> bytes:
         """ Find specified key in changeset buffer. """
-        find_key = (lambda i: key >= self.buffer[4 + i * self.key_length : 4 + (i + 1) * self.key_length])
+        find_key = (lambda i: self.buffer[4 + i * self.key_length : 4 + (i + 1) * self.key_length] >= key)
         key_index = algo.binary_search(0, self.num_changes, find_key)
 
-        if key_index > self.num_changes:
+        if key_index >= self.num_changes:
             return None
         if key != self.buffer[4 + key_index * self.key_length : 4 + (key_index + 1) * self.key_length]:
             return None
@@ -160,7 +160,7 @@ class StorageChangeSet:
             self.buffer[4+i*(4+self.key_prefix_length) : 4+i*(4+self.key_prefix_length)+self.key_prefix_length] >= address_to_find)
         address_index = algo.binary_search(0, self.num_unique_elements, find_addr)
 
-        if address_index > self.num_unique_elements:
+        if address_index >= self.num_unique_elements:
             return None
         address_start = 4 + address_index * (4 + self.key_prefix_length)
         if address_to_find != self.buffer[address_start : address_start + self.key_prefix_length]:
@@ -193,7 +193,7 @@ class StorageChangeSet:
         key_index = algo.binary_search(0, to_index - from_index, find_key)
         index = from_index + key_index
 
-        if index > to_index:
+        if index >= to_index:
             return None
         key_start = self.keys_start + HASH_SIZE * index
         if key_to_find != self.buffer[key_start : key_start + HASH_SIZE]:
@@ -208,7 +208,7 @@ class StorageChangeSet:
             find_incarnation = (lambda j: int.from_bytes(\
                 self.buffer[self.incarnations_start + 12 * j : self.incarnations_start + 12 * j + 4], 'big') >= i)
             inc_index = algo.binary_search(0, self.num_of_not_default_incarnations, find_incarnation)
-            if inc_index > self.num_of_not_default_incarnations:
+            if inc_index >= self.num_of_not_default_incarnations:
                 incarnation = StorageChangeSet.DEFAULT_INCARNATION
             else:
                 incarnation_start = self.incarnations_start + 12 * inc_index

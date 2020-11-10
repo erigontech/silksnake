@@ -62,7 +62,7 @@ class HistoryIndex:
             offset = i * ITEM_LENGTH
             return lower < min_element + (int(elements[offset]&0x7f)<<16) + (int(elements[offset+1])<<8) + int(elements[offset+2])
 
-        truncation_point = algo.binary_search(0, num_elements - 1, greater_than_lower)
+        truncation_point = algo.binary_search(0, num_elements, greater_than_lower)
 
         return self.buffer[:MIN_CHUNCK_SIZE + truncation_point*ITEM_LENGTH]
 
@@ -78,7 +78,7 @@ class HistoryIndex:
         def greater_than_or_equal_value(i: int) -> bool:
             offset = i * ITEM_LENGTH
             return value <= min_element + (int(elements[offset]&0x7f)<<16) + (int(elements[offset+1])<<8) + int(elements[offset+2])
-        idx = algo.binary_search(0, num_elements - 1, greater_than_or_equal_value) * ITEM_LENGTH
+        idx = algo.binary_search(0, num_elements, greater_than_or_equal_value) * ITEM_LENGTH
         if idx == len(elements):
             return 0, False, False
 

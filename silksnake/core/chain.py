@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """The reader of chain state."""
 
+from typing import List ,Tuple
+
 import rlp
 
 from ..core import kvstore
 from ..helpers.dbutils import tables
+from ..remote import kv_metadata
 from ..rlp import sedes
 
 class Blockchain:
@@ -77,3 +80,37 @@ class Blockchain:
             return sedes.decode_block_body(block_body_bytes)
         except rlp.exceptions.DecodingError:
             return None
+
+    def read_block_senders(self, block_number: int, block_hash_bytes: bytes) -> List[bytes]:
+        """ read_block_senders """
+        encoded_block_key = sedes.encode_block_key(block_number, block_hash_bytes)
+        key, txn_senders_bytes = self.database.view().get(tables.TRANSACTION_SENDERS_LABEL, encoded_block_key)
+        if key != encoded_block_key:
+            return None
+        return kv_metadata.decode_account_address_list(txn_senders_bytes)
+
+    def read_transaction_by_hash(self, transaction_hash_bytes: bytes) -> Tuple[sedes.Transaction, int, bytes, int]:
+        """ read_transaction_by_hash """
+        block_number = self.read_transaction_lookup_entry(transaction_hash_bytes)
+        if not block_number:
+            return None, -1, b'', -1
+        block_hash_bytes = self.read_canonical_block_hash(block_number)
+        if not block_hash_bytes:
+            return None, -1, b'', -1
+        block_body = self.read_block_body(block_number, block_hash_bytes)
+        if not block_body:
+            return None, -1, b'', -1
+        transaction_sender_list = self.read_block_senders(block_number, block_hash_bytes)
+        for index, transaction in enumerate(block_body.transactions):
+            if transaction.hash == transaction_hash_bytes:
+                transaction.sender = transaction_sender_list[index]
+                return transaction, block_number, block_hash_bytes, index
+        return None, -1, b'', -1
+
+    def read_transaction_lookup_entry(self, transaction_hash_bytes: bytes) -> int:
+        """ read_transaction_lookup_entry """
+        key, block_number_bytes = self.database.view().get(tables.TRANSACTION_LOOKUP_LABEL, transaction_hash_bytes)
+        if key != transaction_hash_bytes:
+            return None
+        block_number = int.from_bytes(block_number_bytes, 'big')
+        return block_number

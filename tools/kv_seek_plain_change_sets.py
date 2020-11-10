@@ -6,7 +6,7 @@ import argparse
 
 import context # pylint: disable=unused-import
 
-from silksnake.core import changeset
+from silksnake.core import account, changeset
 from silksnake.helpers.dbutils import tables, timestamp
 from silksnake.remote import kv_remote
 from silksnake.remote import kv_utils
@@ -23,7 +23,8 @@ def kv_seek_plain_change_sets(kv_view: kv_remote.RemoteView, block_height: int, 
         account_changeset = changeset.PlainAccountChangeSet(value)
         print('RSP1 key:', key.hex(), account_changeset, '[')
         for i, change in enumerate(account_changeset):
-            print('account_change#' + str(i), change)
+            acc = account.Account.from_storage(change.value) if change.value else ()
+            print('account_change#' + str(i), change, acc)
         print(']')
 
         print('STORAGE CHANGES\nREQ2 block_number:', block_number, '(key: ' + str(change_set_key.hex()) + ')')

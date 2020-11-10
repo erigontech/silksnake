@@ -11,7 +11,7 @@ def binary_search(lower_bound: int, upper_bound: int, predicate: Callable[[int],
         @param upper_bound: upper bound of the search
         @param predicate: unary function which returns true or false
     """
-    index = upper_bound
+    index = upper_bound + 0 # trick to check that upper_bound is integer (then while condition checks lower_bound)
 
     while lower_bound < upper_bound:
         mid = lower_bound + (upper_bound - lower_bound) // 2

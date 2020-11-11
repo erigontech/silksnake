@@ -100,7 +100,7 @@ class Account:
             account_bytes[pos] = num_nonce_bytes
             nonce = self.nonce
             for i in range(num_nonce_bytes, 0, -1):
-                account_bytes[pos+i] = nonce
+                account_bytes[pos+i] = nonce & 0xFF
                 nonce >>= 8
             pos += num_nonce_bytes + 1
 
@@ -118,7 +118,7 @@ class Account:
             account_bytes[pos] = num_incarnation_bytes
             incarnation = self.incarnation
             for i in range(num_incarnation_bytes, 0, -1):
-                account_bytes[pos+i] = incarnation
+                account_bytes[pos+i] = incarnation & 0xFF
                 incarnation >>= 8
             pos += num_incarnation_bytes + 1
 

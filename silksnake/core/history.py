@@ -7,7 +7,6 @@ from . import account
 from . import changeset
 from . import kvstore
 from . import history_index
-from ..helpers import hashing
 from ..helpers.dbutils import composite_keys, tables, timestamp
 
 from .constants import ADDRESS_SIZE, BLOCK_NUMBER_SIZE, HASH_SIZE
@@ -62,7 +61,7 @@ def find_by_history(view: kvstore.View, storage: bool, key: bytes, block_number:
             if not code_hash:
                 return None
             if len(code_hash) > 0:
-                acc.code_hash = hashing.bytes_to_hash(code_hash).hex()
+                acc.code_hash = code_hash.hex()
             data = bytearray(acc.length_for_storage())
             acc.to_storage(data)
             data = bytes(data)

@@ -30,7 +30,10 @@ std::optional<Account> RemoteBuffer::read_account(const evmc::address& address) 
 }
 
 Bytes RemoteBuffer::read_code(const evmc::bytes32& code_hash) const noexcept {
-    return {};
+    py::object silksnake_code = state_reader_.attr("read_code")(silkworm::to_hex(code_hash));
+    auto code_string = std::string(py::str(silksnake_code));
+    Bytes code_bytes{code_string.begin(), code_string.end()};
+    return code_bytes;
 }
 
 std::optional<BlockHeader> RemoteBuffer::read_header(uint64_t block_number, const evmc::bytes32& block_hash) const noexcept {
@@ -38,9 +41,10 @@ std::optional<BlockHeader> RemoteBuffer::read_header(uint64_t block_number, cons
 }
 
 evmc::bytes32 RemoteBuffer::read_storage(const evmc::address& address, uint64_t incarnation, const evmc::bytes32& key) const noexcept {
-    py::object storage_value = state_reader_.attr("read_account_storage")(silkworm::to_hex(address), incarnation, key);
-    py::print(py::str(storage_value));
-    return {};
+    py::object value = state_reader_.attr("read_account_storage")(silkworm::to_hex(address), incarnation, silkworm::to_hex(key));
+    auto value_string = std::string(py::str(value));
+    Bytes storage_value{value_string.begin(), value_string.end()};
+    return silkworm::to_bytes32(storage_value);
 }
 
 uint64_t RemoteBuffer::previous_incarnation(const evmc::address& address) const noexcept {

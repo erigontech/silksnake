@@ -29,7 +29,7 @@ def execute_transaction(transaction_hash: str):
 
     block = eth_api.get_block_by_number(block_number)
     gas_limit = block.header.gas_limit
-    logging.info('gas limit: %d', gas_limit)
+    logging.info('block gas limit: %d', gas_limit)
 
     block = silkworm.Block(block_number, gas_limit)
     txn = silkworm.Transaction(
@@ -82,6 +82,7 @@ if __name__ == '__main__':
             '0x252f12c04194b096edf5ae2c88ffe7adb3fac85ae4a4c49220741652e5a9d4c4',
             '0xb4a948438d0297e361855b7834951147b8be625c1fbccbed33f41e1be3125762',
             '0x76e0942d3f10147839e3665daad72e8e185fa36bf60c8c6f5fbb638df4d42987',
+            '0x9138df213f7dfbba3459f07590329d5672b9526d4cf1ffbffda7e4896b267830',
         ]
         for txn_hash in transaction_hash_list:
             execute_transaction(txn_hash)

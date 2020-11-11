@@ -3,6 +3,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <silkworm/common/util.hpp>
 #include <silkworm/types/transaction.hpp>
 
 #include "transaction.hpp"
@@ -14,11 +15,13 @@ namespace py = pybind11;
 using namespace silkworm;
 
 std::ostream& operator<<(std::ostream& out, const Transaction& t) {
-    out << "from=" << (t.from.has_value() ? t.from.value() : evmc::address{})
-        << " nonce=" << std::to_string(t.nonce)
+    out << "nonce=" << std::to_string(t.nonce)
         << " gas_price=" << t.gas_price
         << " gas_limit=" << std::to_string(t.gas_limit)
-        << " to=" << (t.to.has_value() ? t.to.value() : evmc::address{});
+        << " to=" << (t.to.has_value() ? t.to.value() : evmc::address{})
+        << " value=" << t.value
+        << " data=0x" << to_hex(t.data).substr(0, 8) << (t.data.length() > 0 ? "..." : "")
+        << " from=" << (t.from.has_value() ? t.from.value() : evmc::address{});
     return out;
 }
 

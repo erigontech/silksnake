@@ -6,6 +6,7 @@ BLOCK_BODIES_LABEL: str = 'b'                                    # 'Block Bodies
 BLOCK_HEADERS_LABEL: str = 'h'                                   # 'Headers'
 BLOCK_HEADER_NUMBERS_LABEL: str = 'H'                            # 'Header Numbers'
 BLOCK_RECEIPTS_LABEL: str = 'r'                                  # 'Receipts'
+CODE_LABEL: str = 'CODE'                                         # 'Code'
 ETH_SUPPLY_LABEL: str = 'org.ffconsulting.tg.db.ETH_SUPPLY.v2'   # 'History of ETH Supply'
 PLAIN_STATE_LABEL: str = 'PLAIN-CST2'                            # 'Plain State'
 PLAIN_ACCOUNTS_CHANGE_SET_LABEL: str = 'PLAIN-ACS'               # 'Account Changes'
@@ -22,6 +23,7 @@ tableLabels: [str] = [
     BLOCK_HEADERS_LABEL,
     BLOCK_HEADER_NUMBERS_LABEL,
     BLOCK_RECEIPTS_LABEL,
+    CODE_LABEL,
     ETH_SUPPLY_LABEL,
     PLAIN_STATE_LABEL,
     PLAIN_ACCOUNTS_CHANGE_SET_LABEL,

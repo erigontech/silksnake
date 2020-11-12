@@ -50,7 +50,7 @@ class HistoryIndex:
         """ length"""
         return (len(self.buffer) - MIN_CHUNCK_SIZE) // ITEM_LENGTH
 
-    def truncate_greater(self, lower: int):
+    def truncate_greater(self, lower: int) -> bytes:
         """ truncateGreater"""
         assert len(self.buffer) >= MIN_CHUNCK_SIZE, 'length is too small'
         assert (len(self.buffer) - MIN_CHUNCK_SIZE) % ITEM_LENGTH == 0, 'length is not 8 mod ITEM_LENGTH'
@@ -85,11 +85,22 @@ class HistoryIndex:
         found_element = min_element + (int(elements[idx]&0x7f)<<16) + (int(elements[idx+1])<<8) + int(elements[idx+2])
         return found_element, (elements[idx]&0x80) != 0, True
 
-    def last_element(self) -> (int, bool):
+    def element(self, i: int) -> (int, bool, bool):
+        """ last_element"""
+        num_elements = (len(self.buffer) - MIN_CHUNCK_SIZE) // ITEM_LENGTH
+        if i < 0 or i >= num_elements:
+            return 0, False, False
+        min_element = int.from_bytes(self.buffer[:MIN_CHUNCK_SIZE], 'big')
+        elements = self.buffer
+        idx = MIN_CHUNCK_SIZE + i * ITEM_LENGTH
+        ith_element = min_element + (int(elements[idx]&0x7f)<<16) + (int(elements[idx+1])<<8) + int(elements[idx+2])
+        return ith_element, (elements[idx]&0x80) != 0, True
+
+    def last_element(self) -> (int, bool, bool):
         """ last_element"""
         num_elements = (len(self.buffer) - MIN_CHUNCK_SIZE) // ITEM_LENGTH
         if num_elements == 0:
-            return 0, False
+            return 0, False, False
         min_element = int.from_bytes(self.buffer[:MIN_CHUNCK_SIZE], 'big')
         elements = self.buffer
         idx = MIN_CHUNCK_SIZE + (num_elements-1) * ITEM_LENGTH

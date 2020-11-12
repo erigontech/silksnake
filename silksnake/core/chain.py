@@ -88,7 +88,11 @@ class Blockchain:
         if key != encoded_block_key:
             return None
         try:
-            return sedes.decode_block_body(block_body_bytes)
+            block_body = sedes.decode_block_body(block_body_bytes)
+            transaction_sender_list = self.read_block_senders(block_number, block_hash_bytes)
+            for index, transaction in enumerate(block_body.transactions):
+                transaction.sender = transaction_sender_list[index]
+            return block_body
         except rlp.exceptions.DecodingError:
             return None
 
@@ -111,10 +115,8 @@ class Blockchain:
         block_body = self.read_block_body(block_number, block_hash_bytes)
         if not block_body:
             return None, -1, b'', -1
-        transaction_sender_list = self.read_block_senders(block_number, block_hash_bytes)
         for index, transaction in enumerate(block_body.transactions):
             if transaction.hash == transaction_hash_bytes:
-                transaction.sender = transaction_sender_list[index]
                 return transaction, block_number, block_hash_bytes, index
         return None, -1, b'', -1
 

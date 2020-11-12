@@ -19,9 +19,9 @@ def terminate_process(signal_number: int, frame):
     logging.info('%s: signal %d, terminating...', __file__, signal_number)
     sys.exit()
 
-def execute_transaction(transaction_hash: str, network: str):
+def execute_transaction(network: str, transaction_hash: str):
     """ execute_transaction """
-    logging.info('%s: START - transaction hash: %s network: %s', __file__, transaction_hash, network)
+    logging.info('%s: START - network: %s transaction hash: %s', __file__, network, transaction_hash)
 
     eth_api = silksnake.EthereumAPI()
     transaction, block_number, _, _ = eth_api.get_transaction_info_by_hash(transaction_hash)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.transaction_hash != '0x':
-        execute_transaction(args.transaction_hash, args.network)
+        execute_transaction(args.network, args.transaction_hash)
     else:
         transaction_hash_list = [
             '0x2bc0dd89423d726a02f1f5cf18a3eea9db68c1abd7239ef5ca62477818c85675',
@@ -89,4 +89,4 @@ if __name__ == '__main__':
             '0x6ac18f5a4539aaa2f16c9b4706cd804e47982d3a0f1db6f2bafb8149f82b65fe',
         ]
         for txn_hash in transaction_hash_list:
-            execute_transaction(txn_hash, args.network)
+            execute_transaction(args.network, txn_hash)

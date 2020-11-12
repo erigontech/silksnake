@@ -88,6 +88,8 @@ void bind_block(py::module_ &m) {
             std::vector<Transaction>&,
             std::vector<BlockHeader>&
             >())
+        .def_readwrite("transactions", &BlockBody::transactions)
+        .def_readwrite("ommers", &BlockBody::ommers)
         .def("__repr__", [](const BlockBody& b) {
             std::ostringstream oss;
             oss << "<silkworm::BlockBody transactions=[" << b.transactions << "], ommers=[" << b.ommers << "]>";

@@ -74,6 +74,11 @@ class Transaction(RlpSerializable, TransactionFieldsAPI):
         ('s', rlp.sedes.big_endian_int),
     ]
 
+    def __repr__(self):
+        beautify = (lambda v: v.hex() if isinstance(v, bytes) else v)
+        keyword_args = tuple("{}={!r}".format(k, beautify(v)) for k, v in self.as_dict().items())
+        return "({})".format(", ".join(keyword_args + ("sender={!r}".format(beautify(self['sender'])),)))
+
 class BlockHeaderFieldsAPI(ABC):
     """ All block header fields. """
     parent_hash: bytes

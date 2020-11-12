@@ -40,6 +40,7 @@ class TestBlockchain:
                                                 00000000000000000000000000000080'),
             (tables.BLOCK_BODIES_LABEL, '0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'):
                 ('0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 'c2c0c0'),
+            (tables.TRANSACTION_SENDERS_LABEL, '0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'): ('', ''),
             }, True),
 
         # Invalid test list
@@ -129,6 +130,7 @@ class TestBlockchain:
                                                 00000000000000000000000000000080'),
             (tables.BLOCK_BODIES_LABEL, '0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'):
                 ('0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a', 'c2c0c0'),
+            (tables.TRANSACTION_SENDERS_LABEL, '0000000000000000ec5f83325a31120741a5bb6ee5e238cc3984ccfad4465a098a555bc61526899a'): ('', ''),
             }, True),
 
         # Invalid test list

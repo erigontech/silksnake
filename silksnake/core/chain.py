@@ -2,10 +2,11 @@
 """The reader of chain state."""
 
 from typing import List ,Tuple
+import json
 
 import rlp
 
-from ..core import kvstore
+from ..core import config, kvstore
 from ..helpers.dbutils import tables
 from ..remote import kv_metadata
 from ..rlp import sedes
@@ -16,6 +17,16 @@ class Blockchain:
         if database is None:
             raise ValueError('database is null')
         self.database = database
+
+    def read_config(self, chain: str) -> Tuple[int, str]:
+        """ read_config """
+        if not chain in config.CHAIN_TABLE:
+            raise ValueError(f'unknown chain {chain}')
+        chain_genesis_hash = config.CHAIN_TABLE[chain]
+        key, config_json = self.database.view().get(tables.CONFIG_PREFIX, chain_genesis_hash)
+        if key != chain_genesis_hash:
+            raise ValueError(f'invalid genesis hash for chain {chain}, key is {key}')
+        return json.loads(config_json)
 
     def read_block_by_number(self, block_number: int) -> sedes.Block:
         """ read_block_by_number """

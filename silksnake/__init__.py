@@ -5,6 +5,8 @@ __version__ = "0.0.1"
 
 from .api.eth import EthereumAPI
 from .api.turbo import TurboAPI
+from .core.config import *
+from .core.chain import Blockchain
 from .core.reader import StateReader
 from .remote.kv_remote import RemoteClient, DEFAULT_TARGET
 from .remote.kv_utils import *

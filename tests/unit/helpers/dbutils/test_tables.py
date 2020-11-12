@@ -13,6 +13,7 @@ def test_table_labels():
     assert BLOCK_HEADER_NUMBERS_LABEL
     assert BLOCK_RECEIPTS_LABEL
     assert CODE_LABEL
+    assert CONFIG_PREFIX
     assert ETH_SUPPLY_LABEL
     assert PLAIN_STATE_LABEL
     assert PLAIN_ACCOUNTS_CHANGE_SET_LABEL
@@ -28,6 +29,7 @@ def test_table_labels():
     assert BLOCK_HEADER_NUMBERS_LABEL in tableLabels
     assert BLOCK_RECEIPTS_LABEL in tableLabels
     assert CODE_LABEL in tableLabels
+    assert CONFIG_PREFIX in tableLabels
     assert ETH_SUPPLY_LABEL in tableLabels
     assert PLAIN_STATE_LABEL in tableLabels
     assert PLAIN_ACCOUNTS_CHANGE_SET_LABEL in tableLabels

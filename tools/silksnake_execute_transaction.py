@@ -7,7 +7,7 @@ import logging
 import signal
 import sys
 
-# pylint: disable=unused-argument,invalid-name,line-too-long
+# pylint: disable=unused-argument,invalid-name,line-too-long,too-many-locals
 
 import context # pylint: disable=unused-import
 import silksnake
@@ -19,9 +19,9 @@ def terminate_process(signal_number: int, frame):
     logging.info('%s: signal %d, terminating...', __file__, signal_number)
     sys.exit()
 
-def execute_transaction(transaction_hash: str):
+def execute_transaction(transaction_hash: str, network: str):
     """ execute_transaction """
-    logging.info('%s: START - transaction hash: %s', __file__, transaction_hash)
+    logging.info('%s: START - transaction hash: %s network: %s', __file__, transaction_hash, network)
 
     eth_api = silksnake.EthereumAPI()
     transaction, block_number, _, _ = eth_api.get_transaction_info_by_hash(transaction_hash)
@@ -48,7 +48,9 @@ def execute_transaction(transaction_hash: str):
     state_reader = silksnake.StateReader(eth_api.remote_kv, block_number)
     buffer = silkworm.RemoteBuffer(state_reader)
     intra_block_state = silkworm.IntraBlockState(buffer)
-    chain_config = silkworm.ChainConfig(5) # read Goerli chain id from config
+    blockchain = silksnake.Blockchain(eth_api.remote_kv)
+    blockchain_config = blockchain.read_config(network)
+    chain_config = silkworm.ChainConfig(blockchain_config['chainId'])
     logging.info('chain_config: %s', chain_config)
     processor = silkworm.ExecutionProcessor(block, intra_block_state, chain_config)
     logging.info('processor: %s', processor)
@@ -64,12 +66,13 @@ if __name__ == '__main__':
     signal.signal(signal.SIGQUIT, terminate_process)
 
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('network', help='the network name')
     parser.add_argument('transaction_hash', help='the transaction hash w or w/o leading 0x')
     parser.add_argument('-t', '--target', default=silksnake.DEFAULT_TARGET, help='the server location as string <address>:<port>')
     args = parser.parse_args()
 
     if args.transaction_hash != '0x':
-        execute_transaction(args.transaction_hash)
+        execute_transaction(args.transaction_hash, args.network)
     else:
         transaction_hash_list = [
             '0x2bc0dd89423d726a02f1f5cf18a3eea9db68c1abd7239ef5ca62477818c85675',
@@ -83,6 +86,7 @@ if __name__ == '__main__':
             '0xb4a948438d0297e361855b7834951147b8be625c1fbccbed33f41e1be3125762',
             '0x76e0942d3f10147839e3665daad72e8e185fa36bf60c8c6f5fbb638df4d42987',
             '0x9138df213f7dfbba3459f07590329d5672b9526d4cf1ffbffda7e4896b267830',
+            '0x6ac18f5a4539aaa2f16c9b4706cd804e47982d3a0f1db6f2bafb8149f82b65fe',
         ]
         for txn_hash in transaction_hash_list:
-            execute_transaction(txn_hash)
+            execute_transaction(txn_hash, args.network)

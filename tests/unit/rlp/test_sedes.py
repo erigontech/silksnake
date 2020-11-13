@@ -24,6 +24,23 @@ def test_rlp_serializable():
     assert str(serializable)
     assert repr(serializable)
 
+def test_transaction():
+    """ Unit test for Transaction. """
+    txn = sedes.Transaction(
+        nonce=0,
+        gas_price=1000,
+        gas_limit=10000000,
+        to='',
+        value=0,
+        data=0,
+        v=27,
+        r=0,
+        s=0
+    )
+    txn.sender = ''
+    assert str(txn)
+    assert repr(txn)
+
 def test_block_header():
     """ Unit test for BlockHeader. """
     header1 = sedes.BlockHeader()

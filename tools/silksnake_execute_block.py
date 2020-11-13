@@ -19,16 +19,14 @@ def terminate_process(signal_number: int, frame):
     logging.info('%s: signal %d, terminating...', __file__, signal_number)
     sys.exit()
 
-def execute_block(network: str, block_number: str):
+def execute_block(network: str, block_number: str, gas_limit: int):
     """ execute_block """
-    logging.info('%s: START - network: %s block number: %d', __file__, network, block_number)
-
     eth_api = silksnake.EthereumAPI()
     block = eth_api.get_block_by_number(block_number)
     if not block:
         raise ValueError(f'unknown block {block_number}')
     logging.info('block number: %d', block_number)
-    gas_limit = block.header.gas_limit
+    gas_limit = block.header.gas_limit if gas_limit == 0 else gas_limit
     logging.info('block gas limit: %d', gas_limit)
 
     sw_transaction_list = []
@@ -61,8 +59,6 @@ def execute_block(network: str, block_number: str):
     receipt_list = processor.execute_block()
     logging.info('receipt list: %s', receipt_list)
 
-    logging.info('%s: END', __file__)
-
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)-15s %(message)s', level=logging.INFO)
 
@@ -72,16 +68,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('network', help='the network name')
     parser.add_argument('block_number', help='the block number')
+    parser.add_argument('-g', '--gas_limit', default=0, help='the block gas limit to use (default=0 means use limit in block)')
     parser.add_argument('-t', '--target', default=silksnake.DEFAULT_TARGET, help='the server location as string <address>:<port>')
     args = parser.parse_args()
 
     args.block_number = int(args.block_number)
+    args.gas_limit = int(args.gas_limit)
 
-    if args.block_number >= 0:
-        execute_block(args.network, args.block_number)
-    else:
-        block_heigth_list = [
-            '',
-        ]
-        for block_heigth in block_heigth_list:
-            execute_block(args.network, block_heigth)
+    logging.info('%s: START - network: %s block number: %d', __file__, args.network, args.block_number)
+
+    execute_block(args.network, args.block_number, args.gas_limit)
+
+    logging.info('%s: END', __file__)

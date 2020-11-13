@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """The turbo-geth/silkworm KV application protocol metadata."""
 
+from typing import List
+
 from silksnake.core.constants import ADDRESS_SIZE
 
 def encode_account_address(account_address: str) -> bytes:
     """ Encode the given hex account address as 20-byte buffer.
     """
+    if not account_address:
+        raise ValueError('null or empty account_address')
     account_address = account_address[2:] if account_address.startswith('0x') else account_address
     return bytes.fromhex(account_address)
 
@@ -17,9 +21,11 @@ def encode_account_history_key(account_address: str, block_number: int) -> bytes
     account_history_key = account_address_bytes + block_number_bytes
     return account_history_key
 
-def decode_account_address_list(address_list_bytes: bytes):
+def decode_account_address_list(address_list_bytes: bytes) -> List[str]:
     """ Decode the given data bytes as concatenated list of 20-byte addresses.
     """
+    if len(address_list_bytes) % ADDRESS_SIZE != 0:
+        raise ValueError(f'address_list_bytes must be multiple of {ADDRESS_SIZE}')
     num_addresses = len(address_list_bytes) // ADDRESS_SIZE
     account_address_list = []
     for i in range(num_addresses):

@@ -20,7 +20,10 @@ def terminate_process(signal_number: int, frame):
     sys.exit()
 
 def execute_transaction(network: str, transaction_hash: str):
-    """ execute_transaction """
+    """ execute_transaction will run the transaction with given hash on target network.
+        WARNING: if multiple transactions from the same sender were included in the block which this transaction
+        belongs to, then this transaction *MUST* be the first one or will fail with 'invalid nonce'
+    """
     logging.info('%s: START - network: %s transaction hash: %s', __file__, network, transaction_hash)
 
     eth_api = silksnake.EthereumAPI()
@@ -71,22 +74,4 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--target', default=silksnake.DEFAULT_TARGET, help='the server location as string <address>:<port>')
     args = parser.parse_args()
 
-    if args.transaction_hash != '0x':
-        execute_transaction(args.network, args.transaction_hash)
-    else:
-        transaction_hash_list = [
-            '0x2bc0dd89423d726a02f1f5cf18a3eea9db68c1abd7239ef5ca62477818c85675',
-            '0x5a2724495ddddd755f41bf88b23d13e942bd7e00953e507348ddd0f6f3d85f21',
-            '0x32ac38d399e06e2dbe19b93e11c2ae58616e27473806b16149be42ad0a393362',
-            '0xb77244b337a9bf57e74690d8678aad2999c2b70cfcefa525446b593e7a19afeb',
-            '0x39d4db2e4e42351131c8bcc2f9c3c0867ca96359ffd7a5c66e74ee19dce0a8c5',
-            '0xa17fefad767e352ce9fd45e77c59608fbd8d5c9ac1ed3d870dd8ead115afc552',
-            '0x203256a92ce53f6b11bc6cfa630e230a6097b245e182817cc53296f93be4e17d',
-            '0x252f12c04194b096edf5ae2c88ffe7adb3fac85ae4a4c49220741652e5a9d4c4',
-            '0xb4a948438d0297e361855b7834951147b8be625c1fbccbed33f41e1be3125762',
-            '0x76e0942d3f10147839e3665daad72e8e185fa36bf60c8c6f5fbb638df4d42987',
-            '0x9138df213f7dfbba3459f07590329d5672b9526d4cf1ffbffda7e4896b267830',
-            '0x6ac18f5a4539aaa2f16c9b4706cd804e47982d3a0f1db6f2bafb8149f82b65fe',
-        ]
-        for txn_hash in transaction_hash_list:
-            execute_transaction(args.network, txn_hash)
+    execute_transaction(args.network, args.transaction_hash)

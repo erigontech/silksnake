@@ -20,13 +20,16 @@ class TransactionReceipt:
         """ Decode the given bytes as list of block receipts. """
         transaction_receipt_list = []
         trn_receipt_list = cbor2.loads(block_receipt_bytes)
+        if not trn_receipt_list:
+            return transaction_receipt_list
         for trn_receipt in trn_receipt_list:
             post_state, status, cumulative_gas_used, trn_logs = trn_receipt
             log_list = []
-            for trn_log in trn_logs:
-                address, topics, data = trn_log
-                log_instance = log.Log(address, topics, data)
-                log_list.append(log_instance)
+            if trn_logs:
+                for trn_log in trn_logs:
+                    address, topics, data = trn_log
+                    log_instance = log.Log(address, topics, data)
+                    log_list.append(log_instance)
             transaction_receipt = TransactionReceipt(post_state, status, cumulative_gas_used, log_list)
             transaction_receipt_list.append(transaction_receipt)
         return transaction_receipt_list

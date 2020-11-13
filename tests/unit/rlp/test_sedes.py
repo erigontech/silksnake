@@ -37,6 +37,8 @@ def test_transaction():
         r=0,
         s=0
     )
+    assert str(txn)
+    assert repr(txn)
     txn.sender = ''
     assert str(txn)
     assert repr(txn)

@@ -45,6 +45,8 @@ class TestTransactionReceipt:
                     044664c7bf6451f00000586000000000000000000000000000000000000000000000000000000000000965360000000000000000\
                         000000000000000000000000000000000000000000096635c00fdd12a308538d70ee5ab0afef1e99d2281829f4063e767db281a28e601c92'
         , True),
+        ('f6', True),
+        ('8184f60019a05ff6', True),
 
         # Invalid test list
         (None, False),
@@ -56,7 +58,7 @@ class TestTransactionReceipt:
         buffer_bytes = bytes.fromhex(buffer) if buffer is not None else None
         if should_pass:
             brl_instance = receipt.TransactionReceipt.from_bytes(buffer_bytes)
-            assert brl_instance
+            assert brl_instance is not None
         else:
             with pytest.raises((cbor2.CBORDecodeError, SystemError)):
                 receipt.TransactionReceipt.from_bytes(buffer_bytes)

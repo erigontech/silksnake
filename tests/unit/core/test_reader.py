@@ -83,6 +83,34 @@ class TestStateReader:
             with pytest.raises(ValueError):
                 state_reader.read_account_storage(address, incarnation, location_hash)
 
+    @pytest.mark.parametrize("code_hash_hex,result_key,result_value,should_pass", [
+        # Valid test list
+        (
+            'de06e68660429b198612e4b73919395799f9ad87bcaa80dc873e37b281060517',
+            'de06e68660429b198612e4b73919395799f9ad87bcaa80dc873e37b281060517',
+            '07010104017f4abe0101',
+            True
+        ),
+
+        # Invalid test list
+        (
+            None,
+            'de06e68660429b198612e4b73919395799f9ad87bcaa80dc873e37b281060517',
+            '07010104017f4abe0101',
+            False
+        ),
+    ])
+    def test_read_code(self, database_view_get, code_hash_hex: str, result_key: str, result_value: str, should_pass: bool):
+        """Unit test for read_code."""
+        result_value_bytes = bytes.fromhex(result_value) if result_value is not None else None
+        state_reader = reader.StateReader(database_view_get, 1234567)
+        if should_pass:
+            code_bytes = state_reader.read_code(code_hash_hex)
+            assert code_bytes == result_value_bytes
+        else:
+            with pytest.raises(TypeError):
+                state_reader.read_code(code_hash_hex)
+
     @pytest.mark.parametrize("block_number,result_key,result_value,should_pass", [
         # Valid test list
         (0, '0000000000000000', '0000000000000001', True),
